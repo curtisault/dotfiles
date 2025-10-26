@@ -7,7 +7,7 @@ My personal development environment configuration files.
 All dependencies can be installed via Homebrew:
 
 ```bash
-brew install git vim neovim tmux fish ghostty fzf ripgrep fd tldr pass bandwich starship tlrc tmux-mem-cpu-load curl mise age sops lnav yazi ncdu stow
+brew install git vim neovim tmux fish ghostty fzf ripgrep fd tldr pass bandwich starship tlrc tmux-mem-cpu-load curl mise age sops lnav yazi ncdu stow atuin
 ```
 
 ## Tools Overview
@@ -137,6 +137,13 @@ brew install git vim neovim tmux fish ghostty fzf ripgrep fd tldr pass bandwich 
 - Shows git status, language versions, and more
 - Configuration: `~/.config/starship.toml`
 
+**[Atuin](https://atuin.sh/)**
+- Magical shell history with sync and search
+- SQLite database for shell history
+- Full-text fuzzy search with context
+- Optional encrypted sync across machines
+- Configuration: `~/.config/atuin/config.toml`
+
 ## Installation
 
 1. **Clone this repository:**
@@ -147,7 +154,7 @@ brew install git vim neovim tmux fish ghostty fzf ripgrep fd tldr pass bandwich 
 
 2. **Install dependencies:**
    ```bash
-   brew install git vim neovim tmux fish ghostty fzf ripgrep fd tldr pass bandwich starship tlrc tmux-mem-cpu-load curl mise age sops lnav yazi ncdu stow
+   brew install git vim neovim tmux fish ghostty fzf ripgrep fd tldr pass bandwich starship tlrc tmux-mem-cpu-load curl mise age sops lnav yazi ncdu stow atuin
    ```
 
 3. **Set up fzf shell integration:**
@@ -169,6 +176,7 @@ brew install git vim neovim tmux fish ghostty fzf ripgrep fd tldr pass bandwich 
    ├── ghostty/.config/ghostty/
    ├── mise/.config/mise/
    ├── starship/.config/starship.toml
+   ├── atuin/.config/atuin/
    └── git/.gitconfig
    ```
 
@@ -177,7 +185,7 @@ brew install git vim neovim tmux fish ghostty fzf ripgrep fd tldr pass bandwich 
    cd ~/dotfiles
    
    # Stow individual packages
-   stow fish nvim tmux vim ghostty mise starship git
+   stow fish nvim tmux vim ghostty mise starship atuin git
    
    # Or stow everything at once
    stow */
@@ -221,6 +229,16 @@ brew install git vim neovim tmux fish ghostty fzf ripgrep fd tldr pass bandwich 
    ```bash
    mise activate fish | source
    ```
+
+10. **Set up Atuin** (add to `~/.config/fish/config.fish`):
+    ```bash
+    atuin init fish | source
+    ```
+    
+    Then import your existing history:
+    ```bash
+    atuin import auto
+    ```
 
 ## Quick Usage Guide
 
@@ -332,6 +350,18 @@ stow */
 stow -n package-name
 ```
 
+### atuin
+```bash
+# Search history (or press Ctrl+R in shell)
+atuin search
+
+# Show stats
+atuin stats
+
+# Sync history (if configured)
+atuin sync
+```
+
 ### sops
 ```bash
 # Encrypt a file with age
@@ -370,6 +400,7 @@ Each tool's configuration is organized in its own "package" directory:
 ├── ghostty/       # Ghostty terminal config
 ├── mise/          # Mise runtime manager config
 ├── starship/      # Starship prompt config
+├── atuin/         # Atuin shell history config
 └── git/           # Git config
 ```
 
@@ -391,6 +422,79 @@ stow -D package-name  # Remove symlinks
 rm -rf package-name   # Remove from repo (optional)
 ```
 
+### Uninstall Scripts
+
+For complete removal of all dotfiles, you can use these scripts:
+
+**Bash version** (`uninstall.sh`):
+```bash
+#!/usr/bin/env bash
+
+set -e
+
+DOTFILES_DIR="$HOME/dotfiles"
+cd "$DOTFILES_DIR"
+
+PACKAGES=(
+    fish
+    nvim
+    tmux
+    vim
+    ghostty
+    mise
+    starship
+    atuin
+    git
+)
+
+for package in "${PACKAGES[@]}"; do
+    echo "Unstowing $package..."
+    stow -D -v "$package" 2>/dev/null || echo "  (not stowed)"
+done
+
+echo "✓ Dotfiles unstowed successfully!"
+```
+
+**Fish version** (`uninstall.fish`):
+```fish
+#!/usr/bin/env fish
+
+set DOTFILES_DIR "$HOME/dotfiles"
+cd $DOTFILES_DIR
+
+set PACKAGES \
+    fish \
+    nvim \
+    tmux \
+    vim \
+    ghostty \
+    mise \
+    starship \
+    atuin \
+    git
+
+for package in $PACKAGES
+    echo "Unstowing $package..."
+    stow -D -v $package 2>/dev/null; or echo "  (not stowed)"
+end
+
+echo "✓ Dotfiles unstowed successfully!"
+```
+
+Make the scripts executable:
+```bash
+chmod +x uninstall.sh uninstall.fish
+```
+
+Run the appropriate script:
+```bash
+# Bash
+./uninstall.sh
+
+# Fish
+./uninstall.fish
+```
+
 ## Customization
 
 Modify the configuration files in this repository to suit your preferences:
@@ -402,6 +506,7 @@ Modify the configuration files in this repository to suit your preferences:
 - `fish/config.fish` - Fish shell configuration
 - `ghostty/config` - Ghostty terminal configuration
 - `mise/config.toml` - Mise runtime version manager configuration
+- `atuin/config.toml` - Atuin shell history configuration
 - `starship.toml` - Starship prompt configuration
 
 ## Updating
