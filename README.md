@@ -7,7 +7,21 @@ My personal development environment configuration files.
 All dependencies can be installed via Homebrew:
 
 ```bash
-brew install git vim neovim tmux fish ghostty fzf ripgrep fd tldr pass bandwich starship tlrc tmux-mem-cpu-load curl mise age sops lnav yazi ncdu stow atuin
+brew install \
+    age atuin \
+    bandwich \
+    curl \
+    fd fish fzf \
+    ghostty git \
+    lnav \
+    mise \
+    ncdu neovim \
+    pass \
+    ripgrep \
+    sops starship stow \
+    tlrc tmux tmux-mem-cpu-load \
+    vim \
+    yazi
 ```
 
 ## Tools Overview
