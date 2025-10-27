@@ -1,0 +1,8 @@
+require("curtis.commands")
+require("curtis.lazy")
+require("curtis.remap")
+require("curtis.set")
+require("curtis.lualine")
+require("curtis.completions")
+require("curtis.mini")
+
