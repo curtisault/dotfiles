@@ -35,7 +35,7 @@ function fish_greeting
     echo "║ 🐠 Welcome, "(whoami)"!                            ║"
 
     set_color --bold green
-    echo "║    "(date "+%A, %B %d, %Y")"                        ║"
+    echo "║    "(date "+%A, %B %d, %Y")"                       ║"
 
     set_color yellow
     echo "╚════════════════════════════════════════════════════╝"
