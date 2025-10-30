@@ -5,3 +5,11 @@ vim.api.nvim_create_user_command("MessagesWindow", function()
     vim.cmd("setlocal noswapfile")
     vim.cmd("0put =execute('messages')")
 end, {})
+
+vim.api.nvim_create_user_command("Scratch", function()
+    vim.cmd("enew")
+    vim.cmd("setlocal buftype=nofile")
+    vim.cmd("setlocal bufhidden=hide")
+    vim.cmd("setlocal noswapfile")
+    vim.bo.buflisted = false
+end, {})
