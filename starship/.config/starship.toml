@@ -26,3 +26,7 @@ format = 'via [🐪 $version]($style) '
 
 [vlang]
 format = 'via [V $version](blue bold) '
+
+[time]
+disabled = false
+format = '[$time]($style) '
