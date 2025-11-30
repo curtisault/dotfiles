@@ -1,12 +1,39 @@
 {
-  "providers": [
-    {
-      "id": "mlx-local",
-      "type": "openai",
-      "baseURL": "http://localhost:8080/v1",
-      "apiKey": "not-needed",
-      "defaultModel": "mlx-community/Qwen2.5-Coder-32B-Instruct-4bit"
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "mlx-local": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "MLX Local",
+      "options": {
+        "baseURL": "http://127.0.0.1:8080/v1",
+        "apiKey": "not-needed"
+      },
+      "models": {
+        "Qwen2.5-Coder-32B-Instruct-4bit": {
+          "name": "Qwen2.5 Coder 32B (MLX)",
+          "options": {
+            "model": "mlx-community/Qwen2.5-Coder-32B-Instruct-4bit"
+          }
+        }
+      }
     }
-  ],
-  "defaultProvider": "mlx-local"
+  },
+  "model": "mlx-local/Qwen2.5-Coder-32B-Instruct-4bit",
+  "mcp": {
+    "serena": {
+      "type": "local",
+      "command": [
+        "uvx",
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena-mcp-server"
+      ],
+      "enabled": true
+    },
+    "rust-analyzer": {
+      "type": "local",
+      "command": ["rust-analyzer-mcp"],
+      "enabled": true
+      }
+    }
 }
