@@ -37,4 +37,4 @@ SETUVAR fish_pager_color_selected_background:\x2dr
 SETUVAR fish_pager_color_selected_completion:\x1d
 SETUVAR fish_pager_color_selected_description:\x1d
 SETUVAR fish_pager_color_selected_prefix:\x1d
-SETUVAR fish_user_paths:/opt/homebrew/opt/postgresql\x4017/bin\x1e/Users/curtisault/\x2ecargo/bin\x1e/opt/homebrew/sbin\x1e/opt/homebrew/bin
+SETUVAR fish_user_paths:/opt/homebrew/opt/libpq/bin\x1e/opt/homebrew/opt/postgresql\x4017/bin\x1e/Users/curtisault/\x2ecargo/bin\x1e/opt/homebrew/sbin\x1e/opt/homebrew/bin
