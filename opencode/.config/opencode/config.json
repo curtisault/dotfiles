@@ -1,0 +1,12 @@
+{
+  "providers": [
+    {
+      "id": "mlx-local",
+      "type": "openai",
+      "baseURL": "http://localhost:8080/v1",
+      "apiKey": "not-needed",
+      "defaultModel": "mlx-community/Qwen2.5-Coder-32B-Instruct-4bit"
+    }
+  ],
+  "defaultProvider": "mlx-local"
+}
