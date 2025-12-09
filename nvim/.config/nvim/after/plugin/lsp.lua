@@ -33,7 +33,7 @@ end)
 require('mason').setup({})
 require('mason-lspconfig').setup({
   ensure_installed = {
-      'elixirls',
+      'expert',
       'rust_analyzer'
   },
   handlers = {
