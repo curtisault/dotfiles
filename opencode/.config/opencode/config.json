@@ -10,6 +10,12 @@
         "apiKey": "not-needed"
       },
       "models": {
+        "Qwen3-Coder-30B-A3B-Instruct-4bit": {
+          "name": "Qwen3 Coder 30B (MLX)",
+          "options": {
+            "model": "mlx-community/Qwen3-Coder-30B-A3B-Instruct-4bit"
+          }
+        },
         "Qwen2.5-Coder-32B-Instruct-4bit": {
           "name": "Qwen2.5 Coder 32B (MLX)",
           "options": {
