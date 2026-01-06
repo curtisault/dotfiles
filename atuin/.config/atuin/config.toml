@@ -118,6 +118,8 @@ history_filter = [
   "^la($| )",
   "^ldot($| )",
   "^l($| )",
+  "^clear($| )",
+  "^claude($| )",
   "^exit", 
 ]
 
