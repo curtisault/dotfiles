@@ -19,7 +19,8 @@ brew install \
     pass \
     ripgrep \
     sops starship stow \
-    tlrc tmux tmux-mem-cpu-load \
+    tealdeer tmux tmux-mem-cpu-load \
+    vhs \
     vim \
     yazi
 ```
@@ -105,14 +106,17 @@ brew install \
 
 ### Documentation & Help
 
-**[tldr](https://github.com/tldr-pages/tldr)**
+**[tealdeer](https://github.com/tealdeer-rs/tealdeer)**
+- Fast Rust implementation of tldr client
 - Simplified man pages with practical examples
 - Community-driven documentation
-- Usage: `tldr <command>`
+- Usage: `tldr <command>` or `tldr --update` to refresh cache
 
-**[tlrc](https://github.com/tldr-pages/tlrc)**
-- Fast Rust implementation of tldr client
-- Drop-in replacement with better performance
+**[vhs](https://github.com/charmbracelet/vhs)**
+- Write terminal GIFs as code
+- Record terminal sessions and convert to GIF/MP4/WebM
+- Perfect for creating demos and documentation
+- Programmable with a simple scripting language
 
 ### Security & Monitoring
 
@@ -168,7 +172,7 @@ brew install \
 
 2. **Install dependencies:**
    ```bash
-   brew install git vim neovim tmux fish ghostty fzf ripgrep fd tldr pass bandwich starship tlrc tmux-mem-cpu-load curl mise age sops lnav yazi ncdu stow atuin
+   brew install git vim neovim tmux fish ghostty fzf ripgrep fd pass bandwich starship tealdeer tmux-mem-cpu-load curl mise age sops lnav yazi ncdu stow atuin vhs
    ```
 
 3. **Set up fzf shell integration:**
@@ -529,7 +533,7 @@ Keep your tools up to date:
 
 ```bash
 brew upgrade
-tldr --update  # Update tldr cache
+tldr --update  # Update tealdeer cache
 ```
 
 ## License
