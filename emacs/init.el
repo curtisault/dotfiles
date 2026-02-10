@@ -288,6 +288,27 @@
          ("C-c p" . evilnc-comment-or-uncomment-paragraphs)))
 
 ;; ============================================================================
+;; Rainbow Delimiters - Colorized matching brackets
+;; ============================================================================
+
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+;; ============================================================================
+;; Org Mode with Evil
+;; ============================================================================
+
+(use-package org
+  :straight nil  ; Built-in
+  :config
+  (setq org-startup-indented t)
+  (setq org-hide-leading-stars t)
+  (setq org-startup-folded 'content)
+  (setq org-log-done 'time))
+
+;; Evil bindings for Org mode are provided by evil-collection above
+
+;; ============================================================================
 ;; Modeline - Telephone Line (terminal-friendly)
 ;; ============================================================================
 
@@ -498,6 +519,10 @@
 (evil-define-key 'normal 'global (kbd "tl") 'tab-last)
 (evil-define-key 'normal 'global (kbd "tn") 'tab-new)
 (evil-define-key 'normal 'global (kbd "td") 'tab-close)
+
+;; Buffer navigation (matching old config)
+(evil-define-key 'normal 'global (kbd "[") 'previous-buffer)
+(evil-define-key 'normal 'global (kbd "]") 'next-buffer)
 
 ;; Better discoverability
 (setq help-window-select t)              ; Focus help windows automatically
