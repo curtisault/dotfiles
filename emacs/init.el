@@ -108,8 +108,24 @@
   (setq evil-want-C-d-scroll t)    ; C-d scrolls down
   (setq evil-undo-system 'undo-redo) ; Use built-in undo-redo
   (setq evil-respect-visual-line-mode t)
+
+  ;; Cursor appearance
+  (setq evil-insert-state-cursor 'bar)
+  (setq evil-normal-state-cursor 'box)
+  (setq evil-emacs-state-cursor 'box)
   :config
   (evil-mode 1)
+
+  ;; Terminal cursor shape changes (send escape sequences directly)
+  (unless (display-graphic-p)
+    (add-hook 'evil-insert-state-entry-hook
+              (lambda () (send-string-to-terminal "\033[6 q")))
+    (add-hook 'evil-normal-state-entry-hook
+              (lambda () (send-string-to-terminal "\033[2 q")))
+    (add-hook 'evil-replace-state-entry-hook
+              (lambda () (send-string-to-terminal "\033[4 q")))
+    (add-hook 'evil-visual-state-entry-hook
+              (lambda () (send-string-to-terminal "\033[2 q"))))
 
   ;; Use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
