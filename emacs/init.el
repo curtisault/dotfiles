@@ -539,6 +539,28 @@
 ;; Leader Key Setup (SPC as leader, using Evil)
 ;; ============================================================================
 
+;; Normal mode - clear highlights (matching nvim)
+(evil-define-key 'normal 'global (kbd "<escape>") 'evil-ex-nohighlight)
+
+;; Diagnostics (matching nvim's <leader>dt)
+(evil-define-key 'normal 'global (kbd "<leader>dt") 'consult-flymake)
+
+;; Window navigation with C-hjkl (matching nvim)
+(evil-define-key 'normal 'global (kbd "C-h") 'evil-window-left)
+(evil-define-key 'normal 'global (kbd "C-j") 'evil-window-down)
+(evil-define-key 'normal 'global (kbd "C-k") 'evil-window-up)
+(evil-define-key 'normal 'global (kbd "C-l") 'evil-window-right)
+
+;; Window resize with Shift+arrows (matching nvim)
+(evil-define-key 'normal 'global (kbd "<S-up>") 'shrink-window)
+(evil-define-key 'normal 'global (kbd "<S-down>") 'enlarge-window)
+(evil-define-key 'normal 'global (kbd "<S-left>") 'shrink-window-horizontally)
+(evil-define-key 'normal 'global (kbd "<S-right>") 'enlarge-window-horizontally)
+
+;; Visual mode - keep selection after indent (matching nvim)
+(evil-define-key 'visual 'global (kbd "<") (lambda () (interactive) (evil-shift-left (region-beginning) (region-end)) (evil-normal-state) (evil-visual-restore)))
+(evil-define-key 'visual 'global (kbd ">") (lambda () (interactive) (evil-shift-right (region-beginning) (region-end)) (evil-normal-state) (evil-visual-restore)))
+
 ;; File operations
 (evil-define-key 'normal 'global (kbd "<leader>ff") 'find-file)
 (evil-define-key 'normal 'global (kbd "<leader>fg") 'consult-ripgrep)
