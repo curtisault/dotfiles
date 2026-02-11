@@ -1,6 +1,8 @@
-# Emacs with Native Compilation
+# Terminal Emacs with Native Compilation
 
-Build script and configuration for Emacs with native compilation support, configured for terminal use only with vim keybindings.
+**Terminal-only Emacs configuration** with vim keybindings (Evil mode) and native compilation support.
+
+This configuration is designed specifically for terminal use (`emacs -nw`) with no GUI dependencies. Perfect for developers who want Emacs power with vim muscle memory in a terminal environment.
 
 ## Building Emacs
 

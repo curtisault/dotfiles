@@ -1,8 +1,9 @@
-;;; init.el --- Minimal Vanilla Emacs Configuration -*- lexical-binding: t; -*-
+;;; init.el --- Terminal Emacs Configuration with Vim Keybindings -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; A minimal, vanilla Emacs configuration that takes advantage of native compilation
-;; while staying close to default Emacs behavior.
+;; A minimal Emacs configuration for terminal use with vim keybindings (Evil mode).
+;; Takes advantage of native compilation while staying close to default Emacs behavior.
+;; This configuration is designed for terminal Emacs only (emacs -nw) with no GUI support.
 
 ;;; Code:
 
