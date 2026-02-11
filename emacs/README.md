@@ -99,7 +99,6 @@ This configuration provides a complete development environment matching your nvi
 
 ### UI Enhancements
 - **Which-key** - Keybinding hints after 0.5s
-- **Telephone-line** - Clean modeline with git/LSP info
 - **hl-todo** - Highlight TODO/FIXME/NOTE/HACK in comments
 - **Evil-nerd-commenter** - Easy commenting
 
