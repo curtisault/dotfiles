@@ -181,34 +181,45 @@ brew install \
    ```
 
 4. **Organize dotfiles for Stow:**
-   
-   Your dotfiles should be organized like this:
+
+   Dotfiles are organized by operating system, with each OS having its own subdirectory:
    ```
    ~/dotfiles/
-   ├── fish/.config/fish/
-   ├── nvim/.config/nvim/
-   ├── tmux/
-   │   ├── .tmux.conf
-   │   └── .config/tmux/
-   ├── vim/.vimrc
-   ├── ghostty/.config/ghostty/
-   ├── mise/.config/mise/
-   ├── starship/.config/starship.toml
-   ├── atuin/.config/atuin/
-   └── git/.gitconfig
+   ├── linux/
+   │   ├── atuin/.config/atuin/
+   │   ├── fish/.config/fish/
+   │   ├── ghostty/.config/ghostty/
+   │   ├── htop/.config/htop/
+   │   ├── hypr/.config/hypr/
+   │   ├── ironbar/.config/ironbar/
+   │   ├── mise/.config/mise/
+   │   ├── nvim/.config/nvim/
+   │   ├── starship/.config/starship.toml
+   │   └── tmux/.config/tmux/
+   ├── macos/
+   │   ├── atuin/.config/atuin/
+   │   ├── fish/.config/fish/
+   │   ├── ghostty/.config/ghostty/
+   │   ├── mise/.config/mise/
+   │   ├── nvim/.config/nvim/
+   │   ├── starship/.config/starship.toml
+   │   └── tmux/.config/tmux/
+   ├── LICENSE
+   └── README.md
    ```
 
 5. **Deploy dotfiles with Stow:**
    ```bash
-   cd ~/dotfiles
-   
-   # Stow individual packages
-   stow fish nvim tmux vim ghostty mise starship atuin git
-   
-   # Or stow everything at once
-   stow */
+   # Stow individual packages using the -d flag to specify the OS directory
+   stow -d ~/dotfiles/linux -t ~ --restow fish nvim tmux ghostty mise starship atuin
+
+   # Or stow all packages for your OS
+   stow -d ~/dotfiles/linux -t ~ --restow */
+
+   # On macOS
+   stow -d ~/dotfiles/macos -t ~ --restow */
    ```
-   
+
    This creates symlinks from your home directory to the dotfiles repository.
 
 6. **Initialize pass** (if using):
@@ -372,19 +383,16 @@ mise upgrade
 ### GNU Stow
 ```bash
 # Stow a package (create symlinks)
-stow package-name
+stow -d ~/dotfiles/linux -t ~ --restow package-name
 
 # Unstow a package (remove symlinks)
-stow -D package-name
+stow -d ~/dotfiles/linux -t ~ -D package-name
 
-# Restow a package (refresh symlinks)
-stow -R package-name
-
-# Stow all packages
-stow */
+# Stow all packages for your OS
+stow -d ~/dotfiles/linux -t ~ --restow */
 
 # Dry run (see what would happen)
-stow -n package-name
+stow -d ~/dotfiles/linux -t ~ -n --restow package-name
 ```
 
 ### atuin
@@ -422,30 +430,66 @@ lnav -t /var/log/syslog
 
 ## Dotfiles Management
 
-This repository uses **GNU Stow** to manage dotfiles through symlinks.
+This repository uses **GNU Stow** to manage dotfiles through symlinks, organized by operating system.
 
 ### Directory Structure
 
-Each tool's configuration is organized in its own "package" directory:
+Configurations are split into OS-specific subdirectories (`linux/` and `macos/`). Each contains stow packages that mirror the home directory structure:
 
 ```
 ~/dotfiles/
-├── fish/          # Fish shell config
-├── nvim/          # Neovim config
-├── tmux/          # Tmux config
-├── vim/           # Vim config
-├── ghostty/       # Ghostty terminal config
-├── mise/          # Mise runtime manager config
-├── starship/      # Starship prompt config
-├── atuin/         # Atuin shell history config
-└── git/           # Git config
+├── linux/         # Linux-specific configs
+│   ├── atuin/
+│   ├── fish/
+│   ├── ghostty/
+│   ├── htop/
+│   ├── hypr/
+│   ├── ironbar/
+│   ├── mise/
+│   ├── nvim/
+│   ├── starship/
+│   └── tmux/
+├── macos/         # macOS-specific configs
+│   ├── atuin/
+│   ├── fish/
+│   ├── ghostty/
+│   ├── mise/
+│   ├── nvim/
+│   ├── starship/
+│   └── tmux/
+├── LICENSE
+└── README.md
+```
+
+### Stow Usage
+
+Since packages live under OS subdirectories, use the `-d` flag to specify the stow directory:
+
+```bash
+# Stow a single package
+stow -d ~/dotfiles/linux -t ~ --restow fish
+
+# Stow multiple packages
+stow -d ~/dotfiles/linux -t ~ --restow fish nvim tmux ghostty
+
+# Stow all packages for your OS
+stow -d ~/dotfiles/linux -t ~ --restow */
+
+# On macOS
+stow -d ~/dotfiles/macos -t ~ --restow */
 ```
 
 ### Adding New Configurations
 
-1. Create a package directory: `mkdir -p ~/dotfiles/newapp/.config/newapp`
+1. Create a package directory under the appropriate OS:
+   ```bash
+   mkdir -p ~/dotfiles/linux/newapp/.config/newapp
+   ```
 2. Add your config files maintaining the home directory structure
-3. Stow the package: `cd ~/dotfiles && stow newapp`
+3. Stow the package:
+   ```bash
+   stow -d ~/dotfiles/linux -t ~ --restow newapp
+   ```
 
 ### Updating Configurations
 
@@ -454,82 +498,11 @@ Simply edit files in the dotfiles repository. Changes are immediately reflected 
 ### Removing Configurations
 
 ```bash
-cd ~/dotfiles
-stow -D package-name  # Remove symlinks
-rm -rf package-name   # Remove from repo (optional)
-```
+# Remove symlinks for a package
+stow -d ~/dotfiles/linux -t ~ -D package-name
 
-### Uninstall Scripts
-
-For complete removal of all dotfiles, you can use these scripts:
-
-**Bash version** (`uninstall.sh`):
-```bash
-#!/usr/bin/env bash
-
-set -e
-
-DOTFILES_DIR="$HOME/dotfiles"
-cd "$DOTFILES_DIR"
-
-PACKAGES=(
-    fish
-    nvim
-    tmux
-    vim
-    ghostty
-    mise
-    starship
-    atuin
-    git
-)
-
-for package in "${PACKAGES[@]}"; do
-    echo "Unstowing $package..."
-    stow -D -v "$package" 2>/dev/null || echo "  (not stowed)"
-done
-
-echo "✓ Dotfiles unstowed successfully!"
-```
-
-**Fish version** (`uninstall.fish`):
-```fish
-#!/usr/bin/env fish
-
-set DOTFILES_DIR "$HOME/dotfiles"
-cd $DOTFILES_DIR
-
-set PACKAGES \
-    fish \
-    nvim \
-    tmux \
-    vim \
-    ghostty \
-    mise \
-    starship \
-    atuin \
-    git
-
-for package in $PACKAGES
-    echo "Unstowing $package..."
-    stow -D -v $package 2>/dev/null; or echo "  (not stowed)"
-end
-
-echo "✓ Dotfiles unstowed successfully!"
-```
-
-Make the scripts executable:
-```bash
-chmod +x uninstall.sh uninstall.fish
-```
-
-Run the appropriate script:
-```bash
-# Bash
-./uninstall.sh
-
-# Fish
-./uninstall.fish
+# Remove from repo (optional)
+rm -rf ~/dotfiles/linux/package-name
 ```
 
 ## Customization
