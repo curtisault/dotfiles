@@ -6,7 +6,7 @@ set -euo pipefail
 # Configuration
 EMACS_VERSION="${EMACS_VERSION:-emacs-29.4}"
 SOURCE_DIR="${HOME}/src/emacs"
-BUILD_JOBS=$(sysctl -n hw.ncpu)
+BUILD_JOBS=$(nproc)
 INSTALL_PREFIX="${INSTALL_PREFIX:-/usr/local}"
 
 # Colors for output
@@ -32,13 +32,15 @@ check_dependencies() {
 
     local missing_deps=()
 
-    if ! command -v brew &> /dev/null; then
-        log_error "Homebrew is required but not installed"
+    if ! command -v pacman &> /dev/null; then
+        log_error "pacman is required but not found"
         exit 1
     fi
 
-    for dep in libgccjit jansson autoconf automake texinfo gnutls pkg-config; do
-        if ! brew list "$dep" &> /dev/null; then
+    local packages=(gcc make libgccjit jansson autoconf automake texinfo gnutls pkgconf tree-sitter ncurses git)
+
+    for dep in "${packages[@]}"; do
+        if ! pacman -Qi "$dep" &> /dev/null 2>&1; then
             missing_deps+=("$dep")
         fi
     done
@@ -49,7 +51,7 @@ check_dependencies() {
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
             log_info "Installing dependencies..."
-            brew install "${missing_deps[@]}"
+            sudo pacman -S --needed "${missing_deps[@]}"
         else
             log_error "Cannot continue without dependencies"
             exit 1
@@ -103,7 +105,6 @@ configure_emacs() {
         --prefix="$INSTALL_PREFIX" \
         --with-native-compilation=aot \
         --without-x \
-        --without-ns \
         --without-dbus \
         --with-gnutls \
         --with-json \
