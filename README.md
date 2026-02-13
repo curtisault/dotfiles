@@ -302,6 +302,25 @@ tmux ls
 tmux attach -t session-name
 ```
 
+#### Saving & Restoring Sessions (tmux-resurrect + tmux-continuum)
+
+The tmux config includes **tmux-resurrect** and **tmux-continuum** plugins for persisting sessions across reboots.
+
+**Manual save/restore (tmux-resurrect):**
+- Save session: `prefix + Ctrl-s` (`C-Space` then `Ctrl-s`)
+- Restore session: `prefix + Ctrl-r` (`C-Space` then `Ctrl-r`)
+
+**Auto-save/restore (tmux-continuum):**
+
+Add these to `tmux.conf` to enable automatic saving and restoring:
+```bash
+# Auto-save every 15 minutes (default)
+set -g @continuum-save-interval '15'
+
+# Auto-restore on tmux server start
+set -g @continuum-restore 'on'
+```
+
 ### pass
 ```bash
 # Add password
