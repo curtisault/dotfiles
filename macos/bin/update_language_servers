@@ -1,0 +1,284 @@
+#!/usr/bin/env bash
+# Update/install language servers to ~/.local/bin
+
+set -euo pipefail
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Ensure local bin exists
+INSTALL_DIR="${HOME}/.local/bin"
+mkdir -p "$INSTALL_DIR"
+
+log_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+log_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Detect OS and architecture
+detect_platform() {
+    local os=$(uname -s | tr '[:upper:]' '[:lower:]')
+    local arch=$(uname -m)
+
+    case "$os" in
+        darwin) os="darwin" ;;
+        linux) os="linux" ;;
+        *) log_error "Unsupported OS: $os" && exit 1 ;;
+    esac
+
+    case "$arch" in
+        x86_64|amd64) arch="amd64" ;;
+        arm64|aarch64) arch="arm64" ;;
+        *) log_error "Unsupported architecture: $arch" && exit 1 ;;
+    esac
+
+    echo "${os}_${arch}"
+}
+
+PLATFORM=$(detect_platform)
+log_info "Detected platform: $PLATFORM"
+
+# ============================================================================
+# Language Server Installers
+# ============================================================================
+
+install_expert() {
+    log_info "Installing/updating Expert (Elixir Language Server)..."
+
+    local binary_name="expert_${PLATFORM}"
+    local install_path="${INSTALL_DIR}/expert"
+
+    if command -v gh &> /dev/null; then
+        # Use gh CLI if available
+        cd "$INSTALL_DIR"
+        if gh release download nightly \
+            --pattern "$binary_name" \
+            --repo elixir-lang/expert \
+            --clobber 2>/dev/null; then
+
+            mv "$binary_name" expert
+            chmod +x expert
+
+            local version=$(./expert --version 2>&1 | head -1)
+            log_success "Expert installed: $version"
+        else
+            log_error "Failed to download Expert"
+            return 1
+        fi
+    else
+        log_warn "gh CLI not found, skipping Expert"
+        return 1
+    fi
+}
+
+install_lua_language_server() {
+    log_info "Installing/updating Lua Language Server..."
+
+    if ! command -v gh &> /dev/null; then
+        log_warn "gh CLI not found, skipping Lua Language Server"
+        return 1
+    fi
+
+    local os_name=$(echo "$PLATFORM" | cut -d_ -f1)
+    local arch_name=$(echo "$PLATFORM" | cut -d_ -f2)
+
+    # LuaLS uses different naming
+    case "$os_name" in
+        darwin) os_name="darwin" ;;
+        linux) os_name="linux" ;;
+    esac
+
+    local archive_name="lua-language-server-${os_name}-${arch_name}.tar.gz"
+    local install_path="${INSTALL_DIR}/lua-language-server"
+    local tmp_dir=$(mktemp -d)
+
+    cd "$tmp_dir"
+    if gh release download latest \
+        --pattern "$archive_name" \
+        --repo LuaLS/lua-language-server 2>/dev/null; then
+
+        # Create install directory
+        mkdir -p "$install_path"
+
+        # Extract
+        tar xzf "$archive_name" -C "$install_path"
+
+        # Create wrapper script
+        cat > "${INSTALL_DIR}/lua-language-server" << 'EOF'
+#!/usr/bin/env bash
+exec "${HOME}/.local/bin/lua-language-server/bin/lua-language-server" "$@"
+EOF
+        chmod +x "${INSTALL_DIR}/lua-language-server"
+
+        rm -rf "$tmp_dir"
+        log_success "Lua Language Server installed from GitHub"
+    else
+        rm -rf "$tmp_dir"
+        log_error "Failed to download Lua Language Server"
+        return 1
+    fi
+}
+
+install_pyright() {
+    log_info "Installing/updating Pyright (Python Language Server)..."
+
+    # Pyright is best installed via npm (it's a Node.js application)
+    # Alternative: basedpyright (community fork) or pylsp
+    if command -v npm &> /dev/null; then
+        npm install -g pyright
+        log_success "Pyright installed/updated via npm"
+    elif command -v pipx &> /dev/null; then
+        # Alternative: python-lsp-server via pipx
+        log_info "npm not found, installing python-lsp-server via pipx instead..."
+        pipx install python-lsp-server
+        log_success "python-lsp-server installed via pipx (use 'pylsp' command)"
+    else
+        log_warn "Neither npm nor pipx found, skipping Python language server"
+        log_info "Install with: npm install -g pyright  OR  pipx install python-lsp-server"
+    fi
+}
+
+install_typescript_language_server() {
+    log_info "Installing/updating TypeScript Language Server..."
+
+    # TypeScript LS is best installed via npm (it's a Node.js application)
+    if command -v npm &> /dev/null; then
+        npm install -g typescript-language-server typescript
+        log_success "TypeScript Language Server installed/updated via npm"
+    else
+        log_warn "npm not found, skipping TypeScript Language Server"
+        log_info "Install with: npm install -g typescript-language-server typescript"
+    fi
+}
+
+install_rust_analyzer() {
+    log_info "Installing/updating rust-analyzer (Rust Language Server)..."
+
+    # Try rustup first (best method if available)
+    if command -v rustup &> /dev/null; then
+        rustup component add rust-analyzer 2>/dev/null || true
+        log_success "rust-analyzer installed/updated via rustup"
+        return 0
+    fi
+
+    # Otherwise download from GitHub
+    if ! command -v gh &> /dev/null; then
+        log_warn "gh CLI not found and rustup not available, skipping rust-analyzer"
+        return 1
+    fi
+
+    local os_name=$(echo "$PLATFORM" | cut -d_ -f1)
+    local arch_name=$(echo "$PLATFORM" | cut -d_ -f2)
+
+    # rust-analyzer uses x86_64/aarch64 naming
+    case "$arch_name" in
+        amd64) arch_name="x86_64" ;;
+        arm64) arch_name="aarch64" ;;
+    esac
+
+    local archive_name="rust-analyzer-${arch_name}-apple-${os_name}.gz"
+    if [ "$os_name" = "linux" ]; then
+        archive_name="rust-analyzer-${arch_name}-unknown-linux-gnu.gz"
+    fi
+
+    cd "${INSTALL_DIR}"
+    if gh release download latest \
+        --pattern "$archive_name" \
+        --repo rust-lang/rust-analyzer \
+        --clobber 2>/dev/null; then
+
+        gunzip -f "$archive_name"
+        local binary_name="${archive_name%.gz}"
+        mv "$binary_name" rust-analyzer
+        chmod +x rust-analyzer
+
+        log_success "rust-analyzer installed from GitHub"
+    else
+        log_error "Failed to download rust-analyzer"
+        return 1
+    fi
+}
+
+# ============================================================================
+# Main Installation
+# ============================================================================
+
+main() {
+    log_info "Starting language server updates..."
+    echo
+
+    local failed=0
+
+    # Install each language server
+    install_expert || ((failed++))
+    echo
+
+    install_lua_language_server || ((failed++))
+    echo
+
+    install_pyright || ((failed++))
+    echo
+
+    install_typescript_language_server || ((failed++))
+    echo
+
+    install_rust_analyzer || ((failed++))
+    echo
+
+    # Summary
+    if [ $failed -eq 0 ]; then
+        log_success "All language servers updated successfully!"
+    else
+        log_warn "$failed language server(s) failed to update"
+    fi
+
+    # Show installed versions
+    echo
+    log_info "Installed language servers:"
+    echo
+
+    if [ -f "${INSTALL_DIR}/expert" ]; then
+        echo -n "  Expert: "
+        "${INSTALL_DIR}/expert" --version 2>&1 | head -1
+    fi
+
+    if command -v lua-language-server &> /dev/null; then
+        echo -n "  Lua LS: "
+        lua-language-server --version 2>&1 | head -1 || echo "installed"
+    fi
+
+    if command -v pyright &> /dev/null; then
+        echo -n "  Pyright: "
+        pyright --version 2>&1 | head -1
+    fi
+
+    if command -v typescript-language-server &> /dev/null; then
+        echo -n "  TypeScript LS: "
+        typescript-language-server --version 2>&1 | head -1
+    fi
+
+    if command -v rust-analyzer &> /dev/null; then
+        echo -n "  rust-analyzer: "
+        rust-analyzer --version 2>&1 | head -1
+    fi
+
+    echo
+    log_info "Done!"
+}
+
+main "$@"
