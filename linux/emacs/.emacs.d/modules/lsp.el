@@ -28,7 +28,8 @@
   (evil-define-key 'normal 'global (kbd "<leader>la") 'eglot-code-actions)
   (evil-define-key 'normal 'global (kbd "<leader>lf") 'eglot-format)
   (evil-define-key 'normal 'global (kbd "<leader>ld") 'xref-find-definitions)
-  (evil-define-key 'normal 'global (kbd "<leader>li") 'xref-find-references))
+  (evil-define-key 'normal 'global (kbd "<leader>li") 'xref-find-references)
+  (evil-define-key 'normal 'global (kbd "K") 'eldoc-doc-buffer))
 
 ;; Project leader key bindings
 (with-eval-after-load 'evil

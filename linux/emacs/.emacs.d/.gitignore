@@ -1,6 +1,8 @@
 auto-save-list/
-eln-cache/
-straight/
-backups/
 autosaves/
+backups/
+eln-cache/
+elpa/
 projects
+straight/
+tree-sitter/
