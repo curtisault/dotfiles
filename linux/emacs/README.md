@@ -85,8 +85,8 @@ The configuration is split into focused modules, each responsible for a specific
 | `modules/core.el` | Performance, UI basics, defaults, backups, clipboard, project |
 | `modules/evil-config.el` | Evil mode, evil-collection, commenting, all navigation/window/tab/buffer keybindings |
 | `modules/completion.el` | Vertico, orderless, consult, marginalia, embark, corfu, cape + file/search leader keys |
-| `modules/ui.el` | Catppuccin theme, modeline, which-key, rainbow-delimiters, hl-todo |
-| `modules/git.el` | Magit + `<leader>gs` |
+| `modules/ui.el` | Catppuccin theme, modeline, which-key, rainbow-delimiters, hl-todo, vundo |
+| `modules/git.el` | Magit, diff-hl + `<leader>gs` |
 | `modules/lsp.el` | Eglot + LSP/project leader keys |
 | `modules/lang.el` | Tree-sitter, elixir-ts-mode, lua-mode, yaml-mode, rust-mode |
 | `modules/org-config.el` | Org mode with all Evil keybindings |
@@ -140,6 +140,7 @@ Everything related to how Emacs looks, from the color scheme to the mode line.
 - **Which-key** - Displays available keybinding continuations in a popup after 0.5 seconds of pressing a prefix key. Press `SPC` and wait to see all leader key options. Essential for discoverability.
 - **Rainbow Delimiters** - Colors matching brackets/parentheses in programming modes so nested structures are easy to read at a glance.
 - **hl-todo** - Highlights keywords in comments: `TODO`, `FIXME`, `HACK`, `IMPORTANT`, `NOTE`. Each gets a distinct color matching the nvim mini.hipatterns configuration.
+- **Vundo** - Visual undo tree browser. Emacs tracks undo history as a tree (not a linear stack), so you can navigate branches of edits you've undone and redone. Uses unicode glyphs for a clean display. Open with `<leader>u`, navigate with `h/j/k/l`, press `q` to quit.
 - **Custom mode line** - A hand-crafted mode line that displays:
   - Evil state with colored background (blue for normal, green for insert, purple for visual, red for replace)
   - Git branch name
@@ -155,6 +156,7 @@ Everything related to how Emacs looks, from the color scheme to the mode line.
 Git workflow built around Magit, widely considered the best Git interface in any editor.
 
 - **Magit** - A complete Git porcelain inside Emacs. Stage hunks interactively, write commits, manage branches, rebase, cherry-pick, bisect, and more — all without leaving the editor. Displays in the same window to avoid layout disruption.
+- **diff-hl** - Shows git change indicators in the margin (added/modified/deleted lines), like gitsigns.nvim. Enabled in `prog-mode` and `org-mode`. Automatically refreshes after Magit operations so the gutter stays in sync.
 - **Leader binding** - `<leader>gs` opens magit-status. Also available via `C-x g`.
 - **File dispatch** - `C-c M-g` opens git commands scoped to the current file (log, blame, diff).
 
@@ -236,6 +238,9 @@ Org mode configuration with Evil keybindings for note-taking, task management, a
 - `tk` - Next tab
 - `tl` - Last tab
 - `td` - Close tab
+
+**Undo:**
+- `SPC u` - Visual undo tree (vundo)
 
 ### Other Useful Bindings
 - `M-;` - Comment/uncomment lines
