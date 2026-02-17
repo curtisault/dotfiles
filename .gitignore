@@ -2,6 +2,9 @@
 macos/tmux/.config/tmux/plugins/
 linux/tmux/.config/tmux/plugins/
 
+# Serena agent files
+.serena/
+
 # Editor/IDE files
 .DS_Store
 *.swp
