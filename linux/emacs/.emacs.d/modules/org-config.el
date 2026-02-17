@@ -10,6 +10,30 @@
   (setq org-startup-folded 'content)
   (setq org-log-done 'time)
 
+  ;; Play sound when org-timer finishes
+  (defun my/org-timer-done-sound ()
+    "Play a system sound when org-timer finishes."
+    (cond
+     ;; Try paplay (PulseAudio) with freedesktop sound theme
+     ((executable-find "paplay")
+      (start-process "org-timer-sound" nil "paplay"
+                     "/usr/share/sounds/freedesktop/stereo/complete.oga"))
+     ;; Fallback to aplay (ALSA) if available
+     ((executable-find "aplay")
+      (start-process "org-timer-sound" nil "aplay"
+                     "/usr/share/sounds/freedesktop/stereo/complete.oga"))
+     ;; Try canberra-gtk-play with sound name
+     ((executable-find "canberra-gtk-play")
+      (start-process "org-timer-sound" nil "canberra-gtk-play" "-i" "complete"))))
+
+  (add-hook 'org-timer-done-hook 'my/org-timer-done-sound)
+
+  ;; Override org notification to avoid D-Bus errors
+  ;; Just show message in minibuffer instead
+  (setq org-show-notification-handler
+        (lambda (msg)
+          (message "Timer finished: %s" msg)))
+
   ;; Essential: TAB cycling (fixes Evil conflict)
   (evil-define-key 'normal org-mode-map (kbd "TAB") 'org-cycle)
   (evil-define-key 'normal org-mode-map (kbd "<tab>") 'org-cycle)

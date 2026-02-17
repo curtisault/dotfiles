@@ -323,6 +323,19 @@
   (setq org-startup-folded 'content)
   (setq org-log-done 'time)
 
+  ;; Play sound when org-timer finishes
+  (defun my/org-timer-done-sound ()
+    "Play a system sound when org-timer finishes."
+    (start-process "org-timer-sound" nil "afplay" "/System/Library/Sounds/Glass.aiff"))
+
+  (add-hook 'org-timer-done-hook 'my/org-timer-done-sound)
+
+  ;; Override org notification to avoid D-Bus errors
+  ;; Just show message in minibuffer instead
+  (setq org-show-notification-handler
+        (lambda (msg)
+          (message "Timer finished: %s" msg)))
+
   ;; Essential: TAB cycling (fixes Evil conflict)
   (evil-define-key 'normal org-mode-map (kbd "TAB") 'org-cycle)
   (evil-define-key 'normal org-mode-map (kbd "<tab>") 'org-cycle)
@@ -406,6 +419,14 @@
 
     " "
 
+    ;; Macro recording indicator
+    (:eval
+     (when defining-kbd-macro
+       (propertize " ● REC " 'face 'error)))
+
+    ;; Org timer and other misc info
+    mode-line-misc-info
+
     ;; Git branch
     (:eval
      (when (and vc-mode buffer-file-name)
@@ -454,6 +475,27 @@
           (propertize (format "%s" server-name)
                       'face 'font-lock-builtin-face)
           "  "))))
+
+    ;; LSP Diagnostics (errors/warnings via Flymake)
+    (:eval
+     (when (and (bound-and-true-p flymake-mode)
+                (fboundp 'flymake--diag-type))
+       (let* ((diags (flymake-diagnostics))
+              (errors (length (seq-filter
+                               (lambda (d)
+                                 (eq (flymake--diag-type d) :error))
+                               diags)))
+              (warnings (length (seq-filter
+                                 (lambda (d)
+                                   (eq (flymake--diag-type d) :warning))
+                                 diags))))
+         (when (or (> errors 0) (> warnings 0))
+           (concat
+            (when (> errors 0)
+              (propertize (format "E:%d " errors) 'face 'error))
+            (when (> warnings 0)
+              (propertize (format "W:%d" warnings) 'face 'warning))
+            "  ")))))
 
     ;; Major mode
     (:eval

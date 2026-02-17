@@ -95,6 +95,14 @@
 
     " "
 
+    ;; Macro recording indicator
+    (:eval
+     (when defining-kbd-macro
+       (propertize " ● REC " 'face 'error)))
+
+    ;; Org timer and other misc info
+    mode-line-misc-info
+
     ;; Git branch
     (:eval
      (when (and vc-mode buffer-file-name)
@@ -143,6 +151,27 @@
           (propertize (format "%s" server-name)
                       'face 'font-lock-builtin-face)
           "  "))))
+
+    ;; LSP Diagnostics (errors/warnings via Flymake)
+    (:eval
+     (when (and (bound-and-true-p flymake-mode)
+                (fboundp 'flymake--diag-type))
+       (let* ((diags (flymake-diagnostics))
+              (errors (length (seq-filter
+                               (lambda (d)
+                                 (eq (flymake--diag-type d) :error))
+                               diags)))
+              (warnings (length (seq-filter
+                                 (lambda (d)
+                                   (eq (flymake--diag-type d) :warning))
+                                 diags))))
+         (when (or (> errors 0) (> warnings 0))
+           (concat
+            (when (> errors 0)
+              (propertize (format "E:%d " errors) 'face 'error))
+            (when (> warnings 0)
+              (propertize (format "W:%d" warnings) 'face 'warning))
+            "  ")))))
 
     ;; Major mode
     (:eval
