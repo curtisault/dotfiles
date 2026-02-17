@@ -1,0 +1,14 @@
+#!/bin/sh
+batt_info=$(pmset -g batt | grep InternalBattery)
+percent=$(echo "$batt_info" | sed 's/.*[[:space:]]\([0-9]*\)%;.*/\1/')
+
+if echo "$batt_info" | grep -q "discharging"; then
+  if echo "$batt_info" | grep -q "(no estimate)"; then
+    echo "$percent% no estimate"
+  else
+    time=$(echo "$batt_info" | sed 's/.*; \([0-9:]*\) remaining.*/\1/')
+    echo "$percent% $time"
+  fi
+else
+  echo "$percent%"
+fi
