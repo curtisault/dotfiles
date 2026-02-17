@@ -1,0 +1,11 @@
+# Tmux plugins (managed by tpm)
+macos/tmux/.config/tmux/plugins/
+linux/tmux/.config/tmux/plugins/
+
+# Editor/IDE files
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
