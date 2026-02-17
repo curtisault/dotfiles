@@ -1,166 +1,40 @@
 # Dotfiles
 
-My personal development environment configuration files.
+My personal development environment configuration files, organized by operating system.
 
-## Dependencies
+## Quick Start
 
-All dependencies can be installed via Homebrew:
+**Install dependencies via Homebrew:**
 
 ```bash
 brew install \
-    age atuin \
-    bandwich \
-    curl \
+    age atuin bandwhich curl \
     fd fish fzf \
     ghostty git \
-    lnav \
-    mise \
+    lnav mise \
     ncdu neovim \
-    pass \
-    ripgrep \
+    pass ripgrep \
     sops starship stow \
     tealdeer tmux tmux-mem-cpu-load \
-    vhs \
-    vim \
-    yazi
+    vhs vim yazi
 ```
 
-## Tools Overview
+**Clone and deploy:**
 
-### Core Tools
+```bash
+git clone https://github.com/yourusername/dotfiles.git ~/dotfiles
+cd ~/dotfiles
 
-**[Git](https://git-scm.com/)**
-- Version control system
-- Essential for managing these dotfiles and all development work
+# On macOS
+stow -d ~/dotfiles/macos -t ~ --restow */
 
-**[Vim](https://www.vim.org/) / [Neovim](https://neovim.io/)**
-- Terminal-based text editors
-- Neovim is a modern fork with better plugin architecture and LSP support
-- Configuration: `.vimrc` / `~/.config/nvim/`
+# On Linux
+stow -d ~/dotfiles/linux -t ~ --restow */
+```
 
-**[Tmux](https://github.com/tmux/tmux)**
-- Terminal multiplexer for session management
-- Enables persistent terminal sessions and split panes
-- Configuration: `.tmux.conf` (sources `~/.config/tmux/tmux.conf`)
-
-**[Fish](https://fishshell.com/)**
-- Friendly interactive shell with modern features
-- Auto-suggestions and syntax highlighting out of the box
-- Configuration: `~/.config/fish/config.fish`
-
-**[Ghostty](https://ghostty.org/)**
-- Fast, native, feature-rich terminal emulator
-- GPU-accelerated with excellent performance
-- Configuration: `~/.config/ghostty/config`
-
-**[tmux-mem-cpu-load](https://github.com/thewtex/tmux-mem-cpu-load)**
-- System monitoring for tmux status bar
-- Displays CPU, memory, and load average
-- Integrates directly into tmux configuration
-
-**[curl](https://curl.se/)**
-- Command-line tool for transferring data with URLs
-- Essential for API interactions and downloads
-- Supports numerous protocols (HTTP, HTTPS, FTP, etc.)
-
-### Search & Navigation
-
-**[fzf](https://github.com/junegunn/fzf)**
-- Fuzzy finder for command-line
-- Powers file search, command history search, and more
-- Integrates with vim/neovim and shell
-
-**[ripgrep (rg)](https://github.com/BurntSushi/ripgrep)**
-- Ultra-fast recursive text search tool
-- Respects `.gitignore` by default
-- Modern replacement for `grep`
-
-**[fd](https://github.com/sharkdp/fd)**
-- Fast and user-friendly alternative to `find`
-- Simpler syntax with sensible defaults
-- Great integration with fzf
-
-**[yazi](https://github.com/sxyazi/yazi)**
-- Blazing fast terminal file manager
-- Written in Rust with vim-like keybindings
-- Image preview support and async I/O
-
-**[ncdu](https://dev.yorhel.nl/ncdu)**
-- NCurses Disk Usage analyzer
-- Interactive way to explore disk space usage
-- Faster and more intuitive than `du`
-
-### Development Tools
-
-**[mise](https://mise.jdx.dev/)**
-- Polyglot runtime manager (successor to asdf)
-- Manages versions of Node.js, Python, Ruby, etc.
-- Fast, written in Rust
-- Configuration: `~/.config/mise/config.toml`
-
-**[GNU Stow](https://www.gnu.org/software/stow/)**
-- Symlink farm manager for dotfiles
-- Organizes and deploys configuration files
-- Simple, no dependencies beyond Perl
-- Manages dotfiles by creating symlinks to a central repository
-
-### Documentation & Help
-
-**[tealdeer](https://github.com/tealdeer-rs/tealdeer)**
-- Fast Rust implementation of tldr client
-- Simplified man pages with practical examples
-- Community-driven documentation
-- Usage: `tldr <command>` or `tldr --update` to refresh cache
-
-**[vhs](https://github.com/charmbracelet/vhs)**
-- Write terminal GIFs as code
-- Record terminal sessions and convert to GIF/MP4/WebM
-- Perfect for creating demos and documentation
-- Programmable with a simple scripting language
-
-### Security & Monitoring
-
-**[pass](https://www.passwordstore.org/)**
-- Unix password manager using GPG encryption
-- Stores passwords in encrypted files
-- Git-friendly for syncing across machines
-
-**[age](https://github.com/FiloSottile/age)**
-- Modern, simple file encryption tool
-- Replacement for GPG for file encryption
-- Used by SOPS for encryption
-
-**[sops](https://github.com/getsops/sops)**
-- Secrets OPerationS - encrypted file editor
-- Works with YAML, JSON, ENV, INI files
-- Integrates with age, GPG, cloud KMS
-- Only encrypts values, leaves keys readable
-
-**[bandwhich](https://github.com/imsnif/bandwhich)**
-- Terminal bandwidth monitoring tool
-- Shows current network utilization by process
-- Useful for debugging network issues
-
-**[lnav](https://lnav.org/)**
-- Advanced log file viewer
-- Automatic format detection and syntax highlighting
-- SQL queries on log data
-- Merges and displays multiple log files
-
-### Shell Enhancement
-
-**[Starship](https://starship.rs/)**
-- Fast, customizable shell prompt
-- Works with bash, zsh, fish, and more
-- Shows git status, language versions, and more
-- Configuration: `~/.config/starship.toml`
-
-**[Atuin](https://atuin.sh/)**
-- Magical shell history with sync and search
-- SQLite database for shell history
-- Full-text fuzzy search with context
-- Optional encrypted sync across machines
-- Configuration: `~/.config/atuin/config.toml`
+For detailed tool information, installation guides, and usage examples, see:
+- **[macOS](macos/README.md)** - macOS-specific configuration and tools
+- **[Linux](linux/README.md)** - Linux-specific configuration and tools
 
 ## Installation
 
@@ -180,253 +54,41 @@ brew install \
    $(brew --prefix)/opt/fzf/install
    ```
 
-4. **Organize dotfiles for Stow:**
-
-   Dotfiles are organized by operating system, with each OS having its own subdirectory:
-   ```
-   ~/dotfiles/
-   ├── linux/
-   │   ├── atuin/.config/atuin/
-   │   ├── fish/.config/fish/
-   │   ├── ghostty/.config/ghostty/
-   │   ├── htop/.config/htop/
-   │   ├── hypr/.config/hypr/
-   │   ├── ironbar/.config/ironbar/
-   │   ├── mise/.config/mise/
-   │   ├── nvim/.config/nvim/
-   │   ├── starship/.config/starship.toml
-   │   └── tmux/.config/tmux/
-   ├── macos/
-   │   ├── atuin/.config/atuin/
-   │   ├── fish/.config/fish/
-   │   ├── ghostty/.config/ghostty/
-   │   ├── mise/.config/mise/
-   │   ├── nvim/.config/nvim/
-   │   ├── starship/.config/starship.toml
-   │   └── tmux/.config/tmux/
-   ├── LICENSE
-   └── README.md
-   ```
-
-5. **Deploy dotfiles with Stow:**
+4. **Deploy dotfiles with Stow:**
    ```bash
-   # Stow individual packages using the -d flag to specify the OS directory
-   stow -d ~/dotfiles/linux -t ~ --restow fish nvim tmux ghostty mise starship atuin
+   # On macOS
+   stow -d ~/dotfiles/macos -t ~ --restow fish nvim tmux ghostty mise starship atuin
 
    # Or stow all packages for your OS
-   stow -d ~/dotfiles/linux -t ~ --restow */
-
-   # On macOS
    stow -d ~/dotfiles/macos -t ~ --restow */
+
+   # On Linux
+   stow -d ~/dotfiles/linux -t ~ --restow */
    ```
 
-   This creates symlinks from your home directory to the dotfiles repository.
-
-6. **Initialize pass** (if using):
-   ```bash
-   gpg --gen-key  # Generate GPG key if you don't have one
-   pass init "your-gpg-key-id"
-   ```
-
-7. **Add Starship to your shell:**
-   
-   For **fish** (add to `~/.config/fish/config.fish`):
-   ```bash
-   starship init fish | source
-   ```
-   
-   For **zsh** (add to `~/.zshrc`):
-   ```bash
-   eval "$(starship init zsh)"
-   ```
-   
-   For **bash** (add to `~/.bashrc`):
-   ```bash
-   eval "$(starship init bash)"
-   ```
-
-8. **Set Fish as default shell** (optional):
+5. **Set Fish as default shell** (optional):
    ```bash
    # Add fish to allowed shells
    echo $(which fish) | sudo tee -a /etc/shells
-   
+
    # Change default shell
    chsh -s $(which fish)
    ```
 
-9. **Activate mise** (add to `~/.config/fish/config.fish`):
+6. **Activate mise** (add to `~/.config/fish/config.fish`):
    ```bash
    mise activate fish | source
    ```
 
-10. **Set up Atuin** (add to `~/.config/fish/config.fish`):
-    ```bash
-    atuin init fish | source
-    ```
-    
-    Then import your existing history:
-    ```bash
-    atuin import auto
-    ```
+7. **Set up Atuin** (add to `~/.config/fish/config.fish`):
+   ```bash
+   atuin init fish | source
+   ```
 
-## Quick Usage Guide
-
-### fzf
-```bash
-# Search files
-fzf
-
-# Search in command history
-Ctrl+R
-
-# Change directory
-Alt+C
-```
-
-### ripgrep
-```bash
-# Search for pattern in files
-rg "pattern"
-
-# Search in specific file types
-rg "pattern" -t py
-```
-
-### fd
-```bash
-# Find files by name
-fd filename
-
-# Find files by extension
-fd -e md
-```
-
-### tmux
-```bash
-# Start new session
-tmux new -s session-name
-
-# List sessions
-tmux ls
-
-# Attach to session
-tmux attach -t session-name
-```
-
-#### Saving & Restoring Sessions (tmux-resurrect + tmux-continuum)
-
-The tmux config includes **tmux-resurrect** and **tmux-continuum** plugins for persisting sessions across reboots.
-
-**Manual save/restore (tmux-resurrect):**
-- Save session: `prefix + Ctrl-s` (`C-Space` then `Ctrl-s`)
-- Restore session: `prefix + Ctrl-r` (`C-Space` then `Ctrl-r`)
-
-**Auto-save/restore (tmux-continuum):**
-
-Add these to `tmux.conf` to enable automatic saving and restoring:
-```bash
-# Auto-save every 15 minutes (default)
-set -g @continuum-save-interval '15'
-
-# Auto-restore on tmux server start
-set -g @continuum-restore 'on'
-```
-
-### pass
-```bash
-# Add password
-pass insert email/gmail
-
-# Retrieve password
-pass email/gmail
-
-# Generate random password
-pass generate email/work 20
-```
-
-### bandwhich
-```bash
-# Monitor bandwidth (requires sudo)
-sudo bandwhich
-```
-
-### yazi
-```bash
-# Launch file manager
-yazi
-
-# Navigate with vim keys (h/j/k/l)
-# Preview files with arrow keys
-```
-
-### ncdu
-```bash
-# Analyze current directory
-ncdu
-
-# Analyze specific directory
-ncdu /path/to/dir
-```
-
-### mise
-```bash
-# Install a tool
-mise use node@20
-
-# List installed tools
-mise list
-
-# Update all tools
-mise upgrade
-```
-
-### GNU Stow
-```bash
-# Stow a package (create symlinks)
-stow -d ~/dotfiles/linux -t ~ --restow package-name
-
-# Unstow a package (remove symlinks)
-stow -d ~/dotfiles/linux -t ~ -D package-name
-
-# Stow all packages for your OS
-stow -d ~/dotfiles/linux -t ~ --restow */
-
-# Dry run (see what would happen)
-stow -d ~/dotfiles/linux -t ~ -n --restow package-name
-```
-
-### atuin
-```bash
-# Search history (or press Ctrl+R in shell)
-atuin search
-
-# Show stats
-atuin stats
-
-# Sync history (if configured)
-atuin sync
-```
-
-### sops
-```bash
-# Encrypt a file with age
-sops -e -age <age-public-key> file.yaml > file.enc.yaml
-
-# Edit encrypted file
-sops file.enc.yaml
-
-# Decrypt file
-sops -d file.enc.yaml
-```
-
-### lnav
-```bash
-# View log files
-lnav /var/log/*.log
-
-# View with live updates
-lnav -t /var/log/syslog
-```
+   Then import your existing history:
+   ```bash
+   atuin import auto
+   ```
 
 ## Dotfiles Management
 
@@ -504,20 +166,6 @@ stow -d ~/dotfiles/linux -t ~ -D package-name
 # Remove from repo (optional)
 rm -rf ~/dotfiles/linux/package-name
 ```
-
-## Customization
-
-Modify the configuration files in this repository to suit your preferences:
-
-- `.vimrc` - Vim configuration
-- `.tmux.conf` - Tmux root configuration (sources `~/.config/tmux/tmux.conf`)
-- `tmux/tmux.conf` - Main tmux configuration
-- `nvim/` - Neovim configuration
-- `fish/config.fish` - Fish shell configuration
-- `ghostty/config` - Ghostty terminal configuration
-- `mise/config.toml` - Mise runtime version manager configuration
-- `atuin/config.toml` - Atuin shell history configuration
-- `starship.toml` - Starship prompt configuration
 
 ## Updating
 
