@@ -1,0 +1,24 @@
+#!/bin/sh
+BAT="/sys/class/power_supply/BAT0"
+percent=$(cat "$BAT/capacity")
+status=$(cat "$BAT/status")
+
+if [ "$status" = "Charging" ]; then
+  icon="󰂄"
+elif [ "$status" = "Full" ]; then
+  icon="󰁹"
+else
+  icon="󰁾"
+fi
+
+if [ "$status" = "Charging" ] || [ "$status" = "Discharging" ]; then
+  time_left=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 \
+    | grep -E "time to (full|empty)" \
+    | sed 's/.*: *//')
+  if [ -n "$time_left" ]; then
+    echo "$icon $percent% ($time_left)"
+    exit 0
+  fi
+fi
+
+echo "$icon $percent%"
