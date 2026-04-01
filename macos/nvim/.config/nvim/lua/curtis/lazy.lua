@@ -44,11 +44,6 @@ local plugins = {
     { 'williamboman/mason.nvim' },
     { 'williamboman/mason-lspconfig.nvim' },
 
-    -- Autocompletion
-    { 'hrsh7th/nvim-cmp' },
-    { 'hrsh7th/cmp-nvim-lsp' },
-    { 'L3MON4D3/LuaSnip' },
-
     -- Language Parser
     { 'nvim-treesitter/nvim-treesitter', lazy = false, build = ':TSUpdate' },
 
@@ -78,18 +73,6 @@ local plugins = {
       'MeanderingProgrammer/render-markdown.nvim',
       opts = {},
       dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
-    },
-
-    -- Copilot
-    -- 'github/copilot.vim', OLD plugin
-
-    {
-      'zbirenbaum/copilot.lua',
-      cmd = 'Copilot',
-      event = 'InsertEnter',
-      config = function()
-        require('copilot').setup({})
-      end,
     },
 
     {
