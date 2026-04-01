@@ -43,6 +43,10 @@ vim.keymap.set('v', '<', '<gv')
 vim.keymap.set('v', '>', '>gv')
 
 
+------ Packages ------
+vim.keymap.set('n', '<leader>pu', '<cmd>lua vim.pack.update()<cr>', { desc = 'Update packages' })
+
+
 ------ Claude Code ------
 vim.keymap.set('n', '<leader>ac', '<cmd>ClaudeCode<cr>', { desc = 'Toggle Claude' })
 vim.keymap.set('n', '<leader>af', '<cmd>ClaudeCodeFocus<cr>', { desc = 'Focus Claude' })
