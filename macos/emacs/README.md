@@ -52,6 +52,7 @@ emacs --batch --eval '(message "Native comp: %s" (native-comp-available-p))'
 ```bash
 mkdir -p ~/.emacs.d
 cp init.el ~/.emacs.d/init.el
+cp early-init.el ~/.emacs.d/early-init.el
 ```
 
 ### First Launch Setup

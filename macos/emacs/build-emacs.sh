@@ -4,7 +4,14 @@
 set -euo pipefail
 
 # Configuration
-EMACS_VERSION="${EMACS_VERSION:-emacs-29.4}"
+get_latest_emacs_version() {
+    git ls-remote --tags https://git.savannah.gnu.org/git/emacs.git \
+        | grep -oE 'emacs-[0-9]+\.[0-9]+$' \
+        | sort -V \
+        | tail -1
+}
+
+EMACS_VERSION="${EMACS_VERSION:-$(get_latest_emacs_version)}"
 SOURCE_DIR="${HOME}/src/emacs"
 BUILD_JOBS=$(sysctl -n hw.ncpu)
 INSTALL_PREFIX="${INSTALL_PREFIX:-/usr/local}"
@@ -71,7 +78,6 @@ clone_or_update_source() {
             git fetch --tags
             git checkout "$EMACS_VERSION"
         }
-        git pull
     else
         log_info "Cloning Emacs repository..."
         mkdir -p "$(dirname "$SOURCE_DIR")"
@@ -79,6 +85,17 @@ clone_or_update_source() {
             https://git.savannah.gnu.org/git/emacs.git "$SOURCE_DIR"
         cd "$SOURCE_DIR"
     fi
+}
+
+detect_source_version() {
+    local ac_init
+    ac_init=$(grep -m1 'AC_INIT' "$SOURCE_DIR/configure.ac" 2>/dev/null || true)
+    if [ -n "$ac_init" ]; then
+        EMACS_SOURCE_VERSION=$(echo "$ac_init" | sed -E 's/AC_INIT\([^,]+, *([^,)]+).*/\1/' | tr -d ' ')
+    else
+        EMACS_SOURCE_VERSION="unknown"
+    fi
+    log_info "Detected Emacs version from source: $EMACS_SOURCE_VERSION"
 }
 
 configure_emacs() {
@@ -98,13 +115,21 @@ configure_emacs() {
         ./autogen.sh
     fi
 
-    # Configure with native compilation and terminal-only
+    local gui_flags=""
+    if [ "$TERMINAL_ONLY" = true ]; then
+        log_info "Building terminal-only (no GUI)"
+        gui_flags="--without-x --without-ns --without-dbus"
+    else
+        log_info "Building with GUI support"
+        gui_flags="--with-ns"
+    fi
+
+    # Configure with native compilation
+    # shellcheck disable=SC2086
     ./configure \
         --prefix="$INSTALL_PREFIX" \
         --with-native-compilation=aot \
-        --without-x \
-        --without-ns \
-        --without-dbus \
+        $gui_flags \
         --with-gnutls \
         --with-json \
         --with-tree-sitter \
@@ -136,6 +161,22 @@ install_emacs() {
         sudo make install
     fi
 
+    if [ "$TERMINAL_ONLY" = false ]; then
+        local app_src="$SOURCE_DIR/nextstep/Emacs.app"
+        local app_dest="/Applications/Emacs.app"
+        local wrapper="$INSTALL_PREFIX/bin/emacs"
+
+        log_info "Copying $app_src to $app_dest..."
+        sudo cp -r "$app_src" "$app_dest"
+
+        log_info "Writing wrapper script $wrapper..."
+        sudo tee "$wrapper" > /dev/null << 'EOF'
+#!/bin/sh
+exec /Applications/Emacs.app/Contents/MacOS/Emacs "$@"
+EOF
+        sudo chmod +x "$wrapper"
+    fi
+
     log_info "Installation complete!"
 }
 
@@ -151,6 +192,7 @@ OPTIONS:
     -p, --prefix PATH       Installation prefix (default: $INSTALL_PREFIX)
     --no-install           Build only, don't install
     --clean                Clean build directory before building
+    --terminal-only        Build without GUI support (no Cocoa/X11)
 
 ENVIRONMENT VARIABLES:
     EMACS_VERSION          Emacs version/branch to build
@@ -169,6 +211,7 @@ EOF
 main() {
     local NO_INSTALL=false
     local DO_CLEAN=false
+    TERMINAL_ONLY=false
 
     # Parse arguments
     while [[ $# -gt 0 ]]; do
@@ -193,6 +236,10 @@ main() {
                 DO_CLEAN=true
                 shift
                 ;;
+            --terminal-only)
+                TERMINAL_ONLY=true
+                shift
+                ;;
             *)
                 log_error "Unknown option: $1"
                 show_usage
@@ -201,15 +248,28 @@ main() {
         esac
     done
 
-    log_info "Building Emacs $EMACS_VERSION with native compilation"
+    log_info "Checking out Emacs $EMACS_VERSION"
     log_info "Installation prefix: $INSTALL_PREFIX"
 
     check_dependencies
     clone_or_update_source
+    detect_source_version
+    log_info "Building Emacs $EMACS_SOURCE_VERSION with native compilation"
 
     if [ "$DO_CLEAN" = true ]; then
         log_info "Cleaning source directory..."
         cd "$SOURCE_DIR"
+        # nextstep/Emacs.app may contain root-owned files from a previous GUI build;
+        # remove it with elevated privileges before git clean so it doesn't error
+        local ns_app="$SOURCE_DIR/nextstep/Emacs.app"
+        if [ -d "$ns_app" ]; then
+            log_info "Removing root-owned $ns_app before git clean..."
+            if [ -w "$ns_app" ]; then
+                rm -rf "$ns_app"
+            else
+                sudo rm -rf "$ns_app"
+            fi
+        fi
         git clean -fdx
     fi
 

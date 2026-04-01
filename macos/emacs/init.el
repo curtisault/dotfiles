@@ -16,6 +16,11 @@
 (setq initial-scratch-message nil)       ; Clean scratch buffer
 (menu-bar-mode -1)                       ; No menu bar (we're in terminal anyway)
 
+;; GUI cleanup (when not in terminal)
+(when (display-graphic-p)
+  (tool-bar-mode -1)
+  (add-to-list 'default-frame-alist '(undecorated-round . t)))
+
 ;; Better defaults
 (setq-default
  indent-tabs-mode nil                    ; Use spaces, not tabs
@@ -293,6 +298,18 @@
          ("C-c M-g" . magit-file-dispatch))
   :config
   (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+;; ============================================================================
+;; Database - pgmacs
+;; ============================================================================
+
+(use-package pgmacs
+  :straight (pgmacs :type git :host github :repo "emarsden/pgmacs"))
+
+;; Load sensitive DB config if present (not committed to version control)
+(let ((db-config (expand-file-name "tss-db-config.el" user-emacs-directory)))
+  (when (file-exists-p db-config)
+    (load db-config)))
 
 ;; ============================================================================
 ;; Commenting - evil-nerd-commenter
@@ -756,6 +773,9 @@
 ;; Buffer navigation (matching old config)
 (evil-define-key 'normal 'global (kbd "[") 'previous-buffer)
 (evil-define-key 'normal 'global (kbd "]") 'next-buffer)
+
+;; Database operations
+(evil-define-key 'normal 'global (kbd "<leader>db") 'pgmacs)
 
 ;; Better discoverability
 (setq help-window-select t)              ; Focus help windows automatically
