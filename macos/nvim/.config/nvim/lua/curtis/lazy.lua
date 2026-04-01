@@ -33,8 +33,6 @@ local plugins = {
 
     'tpope/vim-dispatch',
     'tpope/vim-fugitive',
-    'folke/neodev.nvim',
-
     --- LSP Zero Setup
     { 
         'VonHeikemen/lsp-zero.nvim', 
@@ -52,7 +50,7 @@ local plugins = {
     { 'L3MON4D3/LuaSnip' },
 
     -- Language Parser
-    'nvim-treesitter/nvim-treesitter',
+    { 'nvim-treesitter/nvim-treesitter', lazy = false, build = ':TSUpdate' },
 
     -- Statuses are so cool
     {
