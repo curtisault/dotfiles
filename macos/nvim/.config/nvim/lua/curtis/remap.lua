@@ -43,6 +43,12 @@ vim.keymap.set('v', '<', '<gv')
 vim.keymap.set('v', '>', '>gv')
 
 
+------ Sessions ------
+vim.keymap.set('n', '<leader>sw', '<cmd>lua MiniSessions.write(vim.fn.input("Session name: "))<CR>', { desc = 'Write session' })
+vim.keymap.set('n', '<leader>sr', '<cmd>lua MiniSessions.select()<CR>', { desc = 'Restore session' })
+vim.keymap.set('n', '<leader>sd', '<cmd>lua MiniSessions.select("delete")<CR>', { desc = 'Delete session' })
+
+
 ------ Fuzzy ------
 vim.keymap.set('n', '<leader>ff', '<cmd>Pick files<CR>')
 vim.keymap.set('n', '<leader>fg', '<cmd>Pick grep_live<CR>')
