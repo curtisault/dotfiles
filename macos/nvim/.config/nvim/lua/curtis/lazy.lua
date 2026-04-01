@@ -33,12 +33,6 @@ local plugins = {
 
     'tpope/vim-dispatch',
     'tpope/vim-fugitive',
-    --- LSP Zero Setup
-    { 
-        'VonHeikemen/lsp-zero.nvim', 
-        branch = 'v3.x' 
-    },
-
     -- LSP Support
     { 'neovim/nvim-lspconfig' },
     { 'williamboman/mason.nvim' },
