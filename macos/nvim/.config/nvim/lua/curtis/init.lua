@@ -1,5 +1,5 @@
 require("curtis.commands")
-require("curtis.lazy")
+require("curtis.vimpack")
 require("curtis.remap")
 require("curtis.set")
 require("curtis.lualine")
