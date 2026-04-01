@@ -1,3 +1,4 @@
+require("mini.ai").setup()
 require("mini.basics").setup()
 require("mini.comment").setup()
 require("mini.pick").setup({
