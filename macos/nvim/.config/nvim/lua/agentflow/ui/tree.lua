@@ -215,7 +215,7 @@ local function set_keymaps()
   end)
   map("zM", function()
     for _, a in ipairs(_state.root_agents) do
-      for _, d in ipairs(a:get_subtree and a:get_subtree() or {}) do
+      for _, d in ipairs(a.get_subtree and a:get_subtree() or {}) do
         _state.collapsed[d.name] = true
       end
       _state.collapsed[a.name] = true
