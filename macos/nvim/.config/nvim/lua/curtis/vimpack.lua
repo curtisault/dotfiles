@@ -34,6 +34,9 @@ vim.pack.add({
   -- Claude Code
   'https://github.com/folke/snacks.nvim',
   'https://github.com/coder/claudecode.nvim',
+
+  -- AgentFlow
+  -- 'https://github.com/curtisault/agentflow.nvim',
 })
 
 -- Run TSUpdate after treesitter install/update
