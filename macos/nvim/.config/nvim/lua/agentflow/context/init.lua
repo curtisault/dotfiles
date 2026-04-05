@@ -152,6 +152,13 @@ function M.build(task, cfg)
     end
   end
 
+  -- ── 8. Custom context providers (extensions) ──────────────────────────────
+  local ext_providers = require("agentflow.extensions").run_context_providers(task, cfg)
+  for _, extra in ipairs(ext_providers) do
+    local s = make_section("", extra)
+    if s then table.insert(sections, s) end
+  end
+
   -- ── Assemble within token budget ──────────────────────────────────────────
 
   local chosen      = {}

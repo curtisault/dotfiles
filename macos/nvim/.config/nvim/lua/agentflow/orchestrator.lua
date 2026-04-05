@@ -256,19 +256,47 @@ function M:run_plan(plan, opts)
     -- Run this group in parallel and wait
     local group_results = pool:submit_group(submissions)
 
+    local group_failures = 0
     for _, res in ipairs(group_results) do
       local task_id = res.task and res.task.id
       if task_id then
         all_results[task_id] = res
-        local task = planner.get_task(plan, task_id)
-        if task then
-          task.status = res.ok and "done" or "failed"
-          task.result = res.result
+        local t = planner.get_task(plan, task_id)
+        if t then
+          t.status = res.ok and "done" or "failed"
+          t.result = res.result
         end
+
+        -- Surface errors to the user immediately
+        if not res.ok then
+          group_failures = group_failures + 1
+          vim.schedule(function()
+            vim.notify(
+              string.format("AgentFlow: task %s failed — %s", task_id, res.error or "unknown"),
+              vim.log.levels.WARN
+            )
+          end)
+        end
+
         -- Feed result back into orchestrator conversation
         self:integrate_result(task_id, res)
         self:_track_cost(res.result)
       end
+    end
+
+    -- If all tasks in this group failed, ask the orchestrator whether to abort
+    if group_failures > 0 and group_failures == #submissions then
+      log.warn("orchestrator: entire group failed", { group = group_idx })
+      -- Inform Claude — it may instruct us to skip remaining groups
+      table.insert(self.conversation, {
+        role    = "user",
+        content = string.format(
+          "Warning: all %d tasks in execution group %d failed. " ..
+          "Remaining dependent tasks may be affected. " ..
+          "Please acknowledge and indicate whether to continue with synthesis.",
+          #submissions, group_idx
+        ),
+      })
     end
   end
 

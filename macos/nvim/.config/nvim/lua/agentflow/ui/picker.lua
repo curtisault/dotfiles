@@ -161,18 +161,99 @@ function M.pick(items, opts, on_select)
 end
 
 --- Convenience: pick from a list of agent names.
---- @param agents table[]  Agent config list (from registry.list())
---- @param on_select function  Called with chosen agent config
+--- Provides a live previewer showing the agent's conversation log.
+--- @param agents table[]  Agent config list or live agent objects
+--- @param on_select function  Called with chosen agent
 function M.pick_agent(agents, on_select)
   local items = vim.tbl_map(function(a)
+    local state = a.state or "idle"
+    local dot   = ({ idle = "○", running = "●", completed = "✓", failed = "✗" })[state] or "?"
     return {
-      text  = string.format("%s  (%s / %s)", a.name, a.model, a.backend or "cli"),
+      text  = string.format("%s %s  (%s / %s)",
+        dot, a.name, a.model or "?", a.backend or "cli"),
       value = a,
     }
   end, agents)
-  M.pick(items, { prompt = "Select agent" }, function(item)
+
+  M.pick(items, {
+    prompt = "Select agent",
+    -- Live previewer: show conversation log or config details
+    previewer = function(item)
+      local a = item.value
+      local lines = {}
+      table.insert(lines, "Name:    " .. (a.name or "?"))
+      table.insert(lines, "Model:   " .. (a.model or "?"))
+      table.insert(lines, "Backend: " .. (a.backend or "cli"))
+      table.insert(lines, "State:   " .. (a.state or "idle"))
+      if a.metrics then
+        table.insert(lines, string.format(
+          "Tokens:  %d in / %d out  (%dms)",
+          a.metrics.tokens_in or 0,
+          a.metrics.tokens_out or 0,
+          a.metrics.duration_ms or 0
+        ))
+      end
+      if a.history and #a.history > 0 then
+        table.insert(lines, "")
+        table.insert(lines, "--- Last message ---")
+        local last = a.history[#a.history]
+        for _, l in ipairs(vim.split((last.content or ""):sub(1, 400), "\n")) do
+          table.insert(lines, l)
+        end
+      end
+      return table.concat(lines, "\n")
+    end,
+  }, function(item)
     on_select(item.value)
   end)
+end
+
+--- Multi-select picker (falls back to repeated single-select for vim.ui.select).
+--- @param items table[]  { text, value }
+--- @param opts table  { prompt? }
+--- @param on_select function  Called with table[] of chosen items
+function M.pick_multi(items, opts, on_select)
+  opts = opts or {}
+  local backend = detect_backend()
+
+  -- mini.pick and telescope support multi-select natively
+  if backend == "telescope" then
+    local pickers  = require("telescope.pickers")
+    local finders  = require("telescope.finders")
+    local conf     = require("telescope.config").values
+    local actions  = require("telescope.actions")
+    local state    = require("telescope.actions.state")
+
+    pickers.new({}, {
+      prompt_title = opts.prompt or "AgentFlow (multi)",
+      finder       = finders.new_table({
+        results     = items,
+        entry_maker = function(item)
+          return { value = item, display = item.text, ordinal = item.text }
+        end,
+      }),
+      sorter = conf.generic_sorter({}),
+      attach_mappings = function(prompt_bufnr, map_fn)
+        actions.select_default:replace(function()
+          local picker_state = state.get_current_picker(prompt_bufnr)
+          local multi        = picker_state:get_multi_selection()
+          actions.close(prompt_bufnr)
+          if #multi > 0 then
+            on_select(vim.tbl_map(function(e) return e.value end, multi))
+          else
+            local sel = state.get_selected_entry(prompt_bufnr)
+            if sel then on_select({ sel.value }) end
+          end
+        end)
+        map_fn("i", "<Tab>", actions.toggle_selection + actions.move_selection_worse)
+        map_fn("n", "<Tab>", actions.toggle_selection + actions.move_selection_worse)
+        return true
+      end,
+    }):find()
+  else
+    -- Fallback: single pick
+    M.pick(items, opts, function(item) on_select({ item }) end)
+  end
 end
 
 --- Convenience: pick from a list of strings.
@@ -182,6 +263,49 @@ end
 function M.pick_string(strings, prompt, on_select)
   local items = vim.tbl_map(function(s) return { text = s, value = s } end, strings)
   M.pick(items, { prompt = prompt }, function(item) on_select(item.value) end)
+end
+
+--- Session browser: pick from saved sessions with summary preview.
+--- @param on_select function  Called with chosen session { id, saved_at, cost, model }
+function M.pick_session(on_select)
+  local persistence = require("agentflow.persistence")
+  local sessions    = persistence.list_sessions()
+
+  if #sessions == 0 then
+    vim.notify("AgentFlow: no saved sessions", vim.log.levels.INFO)
+    return
+  end
+
+  local items = vim.tbl_map(function(s)
+    return {
+      text  = string.format("%s  %s  agents:%d  tok:%d",
+        s.id, s.model or "?",
+        s.cost and s.cost.agent_count or 0,
+        s.cost and (s.cost.tokens_in + s.cost.tokens_out) or 0),
+      value = s,
+    }
+  end, sessions)
+
+  M.pick(items, {
+    prompt = "Resume session",
+    previewer = function(item)
+      local s = item.value
+      local lines = {
+        "Session: " .. s.id,
+        "Saved:   " .. (s.saved_at or "?"),
+        "Model:   " .. (s.model or "?"),
+      }
+      if s.cost then
+        table.insert(lines, string.format(
+          "Agents:  %d  |  Tokens: %d in / %d out",
+          s.cost.agent_count or 0, s.cost.tokens_in or 0, s.cost.tokens_out or 0
+        ))
+      end
+      return table.concat(lines, "\n")
+    end,
+  }, function(item)
+    on_select(item.value)
+  end)
 end
 
 return M

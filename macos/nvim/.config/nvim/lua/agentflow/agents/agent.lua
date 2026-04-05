@@ -130,12 +130,38 @@ function M:run(task, context, opts)
   table.insert(messages, { role = "user", content = user_content })
 
   local adapter = self:_get_backend()
+  local retry   = require("agentflow.util.retry")
 
-  local result, err = adapter:complete(messages, {
-    model      = self.config.model,
-    max_tokens = self.config.max_tokens or 8192,
-    system     = opts.system,
-    on_token   = opts.on_token,
+  -- Wrap with retry + timeout from config
+  local cfg        = require("agentflow.config").get()
+  local timeout_ms = cfg.concurrency.timeout_ms or 30000
+
+  local result, err = retry.run(function()
+    return adapter:complete(messages, {
+      model      = self.config.model,
+      max_tokens = self.config.max_tokens or 8192,
+      system     = opts.system,
+      on_token   = opts.on_token,
+      timeout    = timeout_ms,
+    })
+  end, {
+    max_attempts = 3,
+    base_ms      = 1000,
+    on_retry     = function(attempt, retry_err, wait_ms)
+      self:_emit("agent:retrying", {
+        agent   = self,
+        attempt = attempt,
+        error   = retry_err,
+        wait_ms = wait_ms,
+      })
+      vim.schedule(function()
+        vim.notify(
+          string.format("AgentFlow: %s retry %d (wait %dms): %s",
+            self.name, attempt, wait_ms, retry_err),
+          vim.log.levels.WARN
+        )
+      end)
+    end,
   })
 
   self.metrics.duration_ms = vim.loop.now() - (self.metrics.started_at or 0)

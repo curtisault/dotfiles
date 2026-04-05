@@ -67,6 +67,11 @@ function M.get(backend_name, agent_config)
     })
 
   else
+    -- Try custom backends registered via extensions
+    local ext    = require("agentflow.extensions")
+    local custom = ext.get_backend(backend_name, agent_config)
+    if custom then return custom end
+
     error("backend.get: unknown backend '" .. tostring(backend_name) .. "'")
   end
 end

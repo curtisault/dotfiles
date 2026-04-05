@@ -41,6 +41,15 @@ function M.setup(opts)
   _orchestrator  = require("agentflow.orchestrator").new(cfg)
   M._orchestrator = _orchestrator
 
+  -- Boot notification / streaming UX system
+  require("agentflow.ui.notify").setup()
+
+  -- Set up session auto-save
+  require("agentflow.persistence").setup_autosave(_orchestrator)
+
+  -- Register User autocommands for extensibility hooks
+  require("agentflow.extensions").setup_autocommands()
+
   -- Wire UI roster to event bus
   events.on("agent:state_changed", function(_)
     local ok, roster = pcall(require, "agentflow.ui.roster")
@@ -134,6 +143,14 @@ function M._register_commands()
   vim.api.nvim_create_user_command("AgentPick", function()
     M.pick_agent()
   end, { desc = "Open picker to select an agent" })
+
+  vim.api.nvim_create_user_command("AgentSessions", function()
+    M.pick_session()
+  end, { desc = "Browse and resume saved AgentFlow sessions" })
+
+  vim.api.nvim_create_user_command("AgentSave", function()
+    M.save_session()
+  end, { desc = "Save current AgentFlow session to disk" })
 end
 
 -- ── Keymaps ──────────────────────────────────────────────────────────────────
@@ -306,7 +323,47 @@ end
 
 function M.pick_agent()
   log.debug("Pick agent requested")
-  vim.notify("AgentFlow: picker (UI not yet built)", vim.log.levels.INFO)
+  local registry = require("agentflow.agents")
+  local picker   = require("agentflow.ui.picker")
+  picker.pick_agent(registry.list(), function(agent_cfg)
+    vim.notify("AgentFlow: selected agent " .. agent_cfg.name, vim.log.levels.INFO)
+  end)
+end
+
+function M.pick_session()
+  local persistence = require("agentflow.persistence")
+  local picker      = require("agentflow.ui.picker")
+  local sessions    = persistence.list_sessions()
+  if #sessions == 0 then
+    vim.notify("AgentFlow: no saved sessions found", vim.log.levels.INFO)
+    return
+  end
+  local items = vim.tbl_map(function(s)
+    return {
+      text  = string.format("%s  %s  agents:%d",
+        s.id, s.model, s.cost and s.cost.agent_count or 0),
+      value = s.id,
+    }
+  end, sessions)
+  picker.pick(items, { prompt = "Resume session" }, function(item)
+    local async = require("agentflow.util.async")
+    async.run(function()
+      local ok = persistence.load(_orchestrator, item.value)
+      vim.schedule(function()
+        if ok then
+          vim.notify("AgentFlow: session " .. item.value .. " loaded", vim.log.levels.INFO)
+        else
+          vim.notify("AgentFlow: failed to load session " .. item.value, vim.log.levels.ERROR)
+        end
+      end)
+    end)
+  end)
+end
+
+function M.save_session()
+  local persistence = require("agentflow.persistence")
+  local id = persistence.save(_orchestrator)
+  vim.notify("AgentFlow: session saved as " .. id, vim.log.levels.INFO)
 end
 
 return M
