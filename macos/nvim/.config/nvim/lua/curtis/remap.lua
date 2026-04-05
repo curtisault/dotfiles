@@ -5,7 +5,7 @@ vim.keymap.set('n', '<esc>', '<cmd>noh<CR>') -- Clear highlights
 
 
 ------------- Diagnostics -------------
-vim.keymap.set('n', '<leader>dt', '<cmd>Telescope diagnostics<CR>')
+vim.keymap.set('n', '<leader>dt', '<cmd>Pick diagnostic<CR>')
 
 
 -- Window Split
