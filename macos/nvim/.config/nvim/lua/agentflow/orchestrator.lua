@@ -368,7 +368,27 @@ function M:run(prompt, opts)
   if opts.on_plan then pcall(opts.on_plan, plan) end
 
   -- Execute
-  self:run_plan(plan, { on_token = opts.on_token })
+  local all_results = self:run_plan(plan, { on_token = opts.on_token })
+
+  -- Build review items from completed tasks
+  local review_items = {}
+  for task_id, res in pairs(all_results) do
+    if res.ok then
+      local task = planner.get_task(plan, task_id)
+      table.insert(review_items, {
+        agent   = res.agent,
+        task    = task,
+        result  = res.result,
+        context = nil,  -- Phase 6: capture context per-task
+      })
+    end
+  end
+
+  -- Apply approve_mode
+  local approve_mode = self.cfg.ui and self.cfg.ui.approve_mode or "manual"
+  M._handle_review(review_items, approve_mode, function()
+    -- After review completes, synthesize
+  end)
 
   -- Synthesize
   local final, syn_err = self:synthesize({ on_token = opts.on_token })
@@ -376,6 +396,86 @@ function M:run(prompt, opts)
 
   if opts.on_complete then pcall(opts.on_complete, final) end
   return final, nil
+end
+
+--- Handle review items according to approve_mode.
+--- @param items table[]
+--- @param mode string  "manual" | "auto" | "auto-safe"
+--- @param on_complete function|nil
+function M._handle_review(items, mode, on_complete)
+  if not items or #items == 0 then
+    if on_complete then on_complete() end
+    return
+  end
+
+  local diff_mod = require("agentflow.diff")
+  local results_mod = require("agentflow.results")
+
+  if mode == "auto" then
+    -- Apply everything immediately
+    for _, item in ipairs(items) do
+      local artifacts = results_mod.extract(
+        item.result and item.result.content or "", item.task
+      )
+      for _, artifact in ipairs(artifacts) do
+        local bufnr = artifact.path and results_mod.find_buf(artifact.path)
+        if bufnr then
+          diff_mod.apply_artifact(artifact, bufnr)
+        elseif artifact.path then
+          diff_mod.write_to_disk(artifact)
+        end
+      end
+    end
+    vim.notify(
+      string.format("AgentFlow: auto-applied %d results", #items),
+      vim.log.levels.INFO
+    )
+    if on_complete then on_complete() end
+
+  elseif mode == "auto-safe" then
+    -- Auto-approve small diffs, send large ones to manual review
+    local manual = {}
+    for _, item in ipairs(items) do
+      local artifacts = results_mod.extract(
+        item.result and item.result.content or "", item.task
+      )
+      local bufnr      = artifacts[1] and artifacts[1].path and results_mod.find_buf(artifacts[1].path)
+      local diff_text  = ""
+      if artifacts[1] then
+        diff_text, _ = diff_mod.generate_for_artifact(artifacts[1], bufnr)
+      end
+      local line_count = #vim.split(diff_text, "\n", { plain = true })
+
+      if line_count <= 20 then
+        -- Safe to auto-apply
+        for _, artifact in ipairs(artifacts) do
+          local b = artifact.path and results_mod.find_buf(artifact.path)
+          if b then diff_mod.apply_artifact(artifact, b)
+          elseif artifact.path then diff_mod.write_to_disk(artifact) end
+        end
+      else
+        item.artifacts = artifacts
+        item.diff_text = diff_text
+        table.insert(manual, item)
+      end
+    end
+
+    if #manual > 0 then
+      vim.schedule(function()
+        local review_ui = require("agentflow.ui.review")
+        review_ui.open(manual, { on_complete = on_complete })
+      end)
+    else
+      if on_complete then on_complete() end
+    end
+
+  else
+    -- "manual" — always open review panel
+    vim.schedule(function()
+      local review_ui = require("agentflow.ui.review")
+      review_ui.open(items, { on_complete = on_complete })
+    end)
+  end
 end
 
 -- ── Accessors ─────────────────────────────────────────────────────────────────

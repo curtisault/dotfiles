@@ -37,8 +37,9 @@ function M.setup(opts)
   -- Bootstrap agent registry from config
   require("agentflow.agents").setup_from_config()
 
-  -- Create the orchestrator singleton
-  _orchestrator = require("agentflow.orchestrator").new(cfg)
+  -- Create the orchestrator singleton (exposed as M._orchestrator for UI access)
+  _orchestrator  = require("agentflow.orchestrator").new(cfg)
+  M._orchestrator = _orchestrator
 
   -- Wire UI roster to event bus
   events.on("agent:state_changed", function(_)
@@ -212,8 +213,7 @@ end
 
 function M.hub()
   log.debug("Opening hub")
-  -- Phase 5: will open ui/hub.lua
-  vim.notify("AgentFlow: hub (UI not yet built)", vim.log.levels.INFO)
+  require("agentflow.ui.hub").open()
 end
 
 function M.chat()
@@ -228,7 +228,7 @@ end
 
 function M.tree()
   log.debug("Opening tree view")
-  vim.notify("AgentFlow: tree view (UI not yet built)", vim.log.levels.INFO)
+  require("agentflow.ui.tree").open()
 end
 
 function M.roster()
@@ -238,23 +238,32 @@ end
 
 function M.dashboard()
   log.debug("Opening dashboard")
-  vim.notify("AgentFlow: dashboard (UI not yet built)", vim.log.levels.INFO)
+  require("agentflow.ui.dashboard").open()
 end
 
 function M.grid()
   log.debug("Opening grid view")
-  vim.notify("AgentFlow: grid view (UI not yet built)", vim.log.levels.INFO)
+  require("agentflow.ui.grid").open()
 end
 
 function M.config_panel()
   log.debug("Opening config panel")
-  vim.notify("AgentFlow: config panel (UI not yet built)", vim.log.levels.INFO)
+  vim.notify("AgentFlow: config panel (Phase 6)", vim.log.levels.INFO)
 end
 
 function M.review()
   log.debug("Opening review panel")
-  vim.notify("AgentFlow: review panel (UI not yet built)", vim.log.levels.INFO)
+  local review_ui = require("agentflow.ui.review")
+  local queue     = review_ui.get_queue()
+  if #queue > 0 then
+    review_ui.open(queue)
+  else
+    vim.notify("AgentFlow: no results queued for review", vim.log.levels.INFO)
+  end
 end
+
+--- Expose orchestrator for hub/tree/grid to access live state.
+function M._get_orchestrator() return _orchestrator end
 
 function M.status()
   if not _orchestrator then
