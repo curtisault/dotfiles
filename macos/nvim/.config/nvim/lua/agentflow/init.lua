@@ -32,6 +32,9 @@ function M.setup(opts)
   log.setup(cfg.log or {})
   log.info("AgentFlow initializing")
 
+  -- Bootstrap agent registry from config
+  require("agentflow.agents").setup_from_config()
+
   -- Register commands
   M._register_commands()
 
@@ -65,6 +68,10 @@ function M._register_commands()
   vim.api.nvim_create_user_command("AgentTree", function()
     M.tree()
   end, { desc = "Open AgentFlow agent tree view" })
+
+  vim.api.nvim_create_user_command("AgentRoster", function()
+    M.roster()
+  end, { desc = "Open AgentFlow agent roster" })
 
   vim.api.nvim_create_user_command("AgentDash", function()
     M.dashboard()
@@ -166,6 +173,11 @@ end
 function M.tree()
   log.debug("Opening tree view")
   vim.notify("AgentFlow: tree view (UI not yet built)", vim.log.levels.INFO)
+end
+
+function M.roster()
+  log.debug("Opening roster")
+  require("agentflow.ui.roster").open()
 end
 
 function M.dashboard()
