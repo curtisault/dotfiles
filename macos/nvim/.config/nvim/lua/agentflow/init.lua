@@ -3,11 +3,13 @@
 
 local M = {}
 
-local log = require("agentflow.util.log")
+local log    = require("agentflow.util.log")
 local config = require("agentflow.config")
+local events = require("agentflow.util.events")
 
 -- Singleton state
-local _initialized = false
+local _initialized   = false
+local _orchestrator  = nil   -- active Orchestrator instance
 
 -- ── Setup ────────────────────────────────────────────────────────────────────
 
@@ -34,6 +36,15 @@ function M.setup(opts)
 
   -- Bootstrap agent registry from config
   require("agentflow.agents").setup_from_config()
+
+  -- Create the orchestrator singleton
+  _orchestrator = require("agentflow.orchestrator").new(cfg)
+
+  -- Wire UI roster to event bus
+  events.on("agent:state_changed", function(_)
+    local ok, roster = pcall(require, "agentflow.ui.roster")
+    if ok then vim.schedule(function() roster.refresh() end) end
+  end)
 
   -- Register commands
   M._register_commands()
@@ -146,12 +157,57 @@ function M._register_keymaps()
 end
 
 -- ── Public actions ────────────────────────────────────────────────────────────
--- These are stubs that will be wired to real implementations in later phases.
 
+--- Start a full agentic workflow.
+--- Opens the chat pane and runs the orchestrator in the background.
 function M.start(prompt)
+  if not _orchestrator then
+    vim.notify("AgentFlow: not initialized — call setup() first", vim.log.levels.ERROR)
+    return
+  end
+
   log.info("Starting workflow", { prompt = prompt })
-  -- Phase 4: will call orchestrator:submit(prompt)
-  vim.notify("AgentFlow: workflow starting… (orchestrator not yet wired)", vim.log.levels.INFO)
+  vim.notify("AgentFlow: workflow starting…", vim.log.levels.INFO)
+
+  local async = require("agentflow.util.async")
+  async.run(function()
+    local result, err = _orchestrator:run(prompt, {
+      on_token = function(token)
+        -- Future: stream to chat UI
+        _ = token
+      end,
+      on_plan = function(plan)
+        vim.schedule(function()
+          vim.notify(
+            string.format("AgentFlow: plan ready — %d tasks in %d groups",
+              #plan.tasks, #plan.execution_order),
+            vim.log.levels.INFO
+          )
+          events.emit("plan:created", { plan = plan })
+        end)
+      end,
+      on_complete = function(final)
+        vim.schedule(function()
+          local cost = _orchestrator:get_cost()
+          vim.notify(
+            string.format(
+              "AgentFlow: workflow complete — %d agents, %d tokens in / %d out",
+              cost.agent_count, cost.tokens_in, cost.tokens_out
+            ),
+            vim.log.levels.INFO
+          )
+          events.emit("orchestrator:synthesized", { result = final, cost = cost })
+        end)
+      end,
+    })
+
+    if err then
+      vim.schedule(function()
+        vim.notify("AgentFlow: workflow error — " .. err, vim.log.levels.ERROR)
+        log.error("Workflow failed", { error = err })
+      end)
+    end
+  end)
 end
 
 function M.hub()
@@ -201,23 +257,42 @@ function M.review()
 end
 
 function M.status()
-  log.info("Status requested")
-  vim.notify("AgentFlow: status (not yet implemented)", vim.log.levels.INFO)
+  if not _orchestrator then
+    vim.notify("AgentFlow: not initialized", vim.log.levels.WARN)
+    return
+  end
+  local cost = _orchestrator:get_cost()
+  local plan = _orchestrator:get_plan()
+  local msg = string.format(
+    "AgentFlow status — agents: %d | tokens in: %d | tokens out: %d | tasks: %s",
+    cost.agent_count,
+    cost.tokens_in,
+    cost.tokens_out,
+    plan and (#plan.tasks .. " in plan") or "no active plan"
+  )
+  vim.notify(msg, vim.log.levels.INFO)
+  log.info("Status", { cost = cost })
 end
 
 function M.cancel()
-  log.warn("Cancel requested")
-  vim.notify("AgentFlow: cancel (not yet implemented)", vim.log.levels.WARN)
+  if _orchestrator and _orchestrator._pool then
+    _orchestrator._pool:cancel_all()
+    _orchestrator:reset()
+    vim.notify("AgentFlow: workflow cancelled", vim.log.levels.WARN)
+  else
+    vim.notify("AgentFlow: nothing to cancel", vim.log.levels.INFO)
+  end
 end
 
 function M.kill(agent_name)
   log.warn("Kill requested", { agent = agent_name })
-  vim.notify("AgentFlow: kill " .. agent_name .. " (not yet implemented)", vim.log.levels.WARN)
+  vim.notify("AgentFlow: :AgentKill not yet wired to live agent tree (Phase 5)", vim.log.levels.WARN)
 end
 
 function M.add_agent(name, model)
-  log.info("Add agent requested", { name = name, model = model })
-  vim.notify("AgentFlow: add agent (registry not yet built)", vim.log.levels.INFO)
+  local registry = require("agentflow.agents")
+  registry.register({ name = name, model = model, backend = "cli", role = "subagent" })
+  vim.notify("AgentFlow: registered agent '" .. name .. "' (" .. model .. ")", vim.log.levels.INFO)
 end
 
 function M.pick_agent()
