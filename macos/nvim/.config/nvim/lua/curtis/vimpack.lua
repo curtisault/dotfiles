@@ -25,6 +25,9 @@ vim.pack.add({
   -- Treesitter
   'https://github.com/nvim-treesitter/nvim-treesitter',
 
+  -- Utility
+  'https://github.com/nvim-lua/plenary.nvim',
+
   -- Statusline
   'https://github.com/nvim-lualine/lualine.nvim',
 
