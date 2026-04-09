@@ -27,7 +27,7 @@ brew install \
 ```
 
 ```bash
-brew install --cask ghostty font-hack-nerd-font pgadmin4
+brew install --cask ghostty font-hack-nerd-font karabiner-elements pgadmin4
 ```
 
 ### 3. Configure git and set up GitHub SSH
@@ -925,6 +925,28 @@ Set as the font in Ghostty config:
 ```
 font-family = Hack Nerd Font Mono
 ```
+
+---
+
+## Keyboard
+
+### karabiner-elements
+
+[Karabiner-Elements](https://karabiner-elements.pqrs.org/) is a powerful keyboard customizer for macOS.
+
+```bash
+brew install --cask karabiner-elements
+```
+
+Config: `~/.config/karabiner/karabiner.json` (managed via `stow karabiner`)
+
+Grant **Input Monitoring** permission when prompted in System Settings → Privacy & Security.
+
+#### Key mappings
+
+| Key | Tap | Hold |
+|-----|-----|------|
+| Caps Lock | Escape | Control |
 
 ---
 
