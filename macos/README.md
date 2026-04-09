@@ -1,5 +1,74 @@
 # macOS Configuration
 
+## Quick Setup
+
+### 1. Install Homebrew
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+### 2. Install packages
+
+```bash
+brew install \
+    age agg asciinema atac atuin \
+    bandwhich bottom charmbracelet/tap/crush curl \
+    duckdb fd fish fzf \
+    gh git glow gnupg \
+    htop jq k9s kubernetes-cli \
+    lazygit lazysql lnav \
+    mise ncdu neovim \
+    openbao pass pgcli podman podman-tui postgresql@17 pv \
+    qsv ripgrep rsync \
+    sops starship stow \
+    taskwarrior-tui tlrc tmux tmux-mem-cpu-load \
+    vhs vim wget xh yazi
+```
+
+```bash
+brew install --cask ghostty font-hack-nerd-font pgadmin4
+```
+
+### 3. Clone and deploy dotfiles
+
+```bash
+git clone https://github.com/yourusername/dotfiles.git ~/dotfiles
+stow -d ~/dotfiles/macos -t ~ --restow */
+```
+
+### 4. Set Fish as default shell
+
+```bash
+echo $(which fish) | sudo tee -a /etc/shells
+chsh -s $(which fish)
+```
+
+### 5. Set up fzf shell integration
+
+```bash
+$(brew --prefix)/opt/fzf/install
+```
+
+### 6. Initialize podman
+
+```bash
+podman machine init
+podman machine start
+```
+
+### 7. Import shell history into Atuin
+
+```bash
+atuin import auto
+```
+
+### 8. Install tmux plugins
+
+Open tmux and press `prefix + I` to install plugins via tpm.
+
+---
+
 ## Table of Contents
 
 ### Dotfile Management
