@@ -4,21 +4,6 @@ My personal development environment configuration files, organized by operating 
 
 ## Quick Start
 
-**Install dependencies via Homebrew:**
-
-```bash
-brew install \
-    age atuin bandwhich curl \
-    fd fish fzf \
-    ghostty git \
-    lnav mise \
-    ncdu neovim \
-    pass ripgrep \
-    sops starship stow \
-    tealdeer tmux tmux-mem-cpu-load \
-    vhs vim yazi
-```
-
 **Clone and deploy:**
 
 ```bash
@@ -32,7 +17,7 @@ stow -d ~/dotfiles/macos -t ~ --restow */
 stow -d ~/dotfiles/linux -t ~ --restow */
 ```
 
-For detailed tool information, installation guides, and usage examples, see:
+For tool installation instructions and usage examples, see:
 - **[macOS](macos/README.md)** - macOS-specific configuration and tools
 - **[Linux](linux/README.md)** - Linux-specific configuration and tools
 
@@ -44,10 +29,9 @@ For detailed tool information, installation guides, and usage examples, see:
    cd ~/dotfiles
    ```
 
-2. **Install dependencies:**
-   ```bash
-   brew install git vim neovim tmux fish ghostty fzf ripgrep fd pass bandwich starship tealdeer tmux-mem-cpu-load curl mise age sops lnav yazi ncdu stow atuin vhs
-   ```
+2. **Install dependencies** — see the OS-specific README for the full tool list:
+   - [macOS](macos/README.md)
+   - [Linux](linux/README.md)
 
 3. **Set up fzf shell integration:**
    ```bash
@@ -173,7 +157,7 @@ Keep your tools up to date:
 
 ```bash
 brew upgrade
-tldr --update  # Update tealdeer cache
+tldr --update  # Update tlrc cache
 ```
 
 ## License
