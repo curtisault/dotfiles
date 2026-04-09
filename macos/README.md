@@ -48,7 +48,7 @@ ssh -T git@github.com            # verify
 
 ```bash
 git clone git@github.com:yourusername/dotfiles.git ~/dotfiles
-stow -d ~/dotfiles/macos -t ~ --restow */
+cd ~/dotfiles/macos && stow -t ~ --restow */
 ```
 
 ### 5. Set Fish as default shell
