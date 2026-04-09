@@ -30,40 +30,54 @@ brew install \
 brew install --cask ghostty font-hack-nerd-font pgadmin4
 ```
 
-### 3. Clone and deploy dotfiles
+### 3. Configure git and set up GitHub SSH
 
 ```bash
-git clone https://github.com/yourusername/dotfiles.git ~/dotfiles
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+```
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-add ~/.ssh/id_ed25519
+pbcopy < ~/.ssh/id_ed25519.pub   # paste into GitHub → Settings → SSH keys
+ssh -T git@github.com            # verify
+```
+
+### 4. Clone and deploy dotfiles
+
+```bash
+git clone git@github.com:yourusername/dotfiles.git ~/dotfiles
 stow -d ~/dotfiles/macos -t ~ --restow */
 ```
 
-### 4. Set Fish as default shell
+### 5. Set Fish as default shell
 
 ```bash
 echo $(which fish) | sudo tee -a /etc/shells
 chsh -s $(which fish)
 ```
 
-### 5. Set up fzf shell integration
+### 6. Set up fzf shell integration
 
 ```bash
 $(brew --prefix)/opt/fzf/install
 ```
 
-### 6. Initialize podman
+### 7. Initialize podman
 
 ```bash
 podman machine init
 podman machine start
 ```
 
-### 7. Import shell history into Atuin
+### 8. Import shell history into Atuin
 
 ```bash
 atuin import auto
 ```
 
-### 8. Install tmux plugins
+### 9. Install tmux plugins
 
 Open tmux and press `prefix + I` to install plugins via tpm.
 
