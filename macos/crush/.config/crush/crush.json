@@ -1,0 +1,26 @@
+{
+  "$schema": "https://charm.land/crush.json",
+  "providers": {
+    "lmstudio": {
+      "type": "openai-compat",
+      "base_url": "http://localhost:1234/v1",
+      "api_key": "lm-studio",
+      "models": [
+        {
+          "id": "zai-org/glm-4.7-flash",
+          "name": "GLM-4.7 Flash"
+        }
+      ]
+    }
+  },
+  "models": {
+    "large": {
+      "model": "zai-org/glm-4.7-flash",
+      "provider": "lmstudio"
+    },
+    "small": {
+      "model": "zai-org/glm-4.7-flash",
+      "provider": "lmstudio"
+    }
+  }
+}
