@@ -246,6 +246,30 @@ rsync -avz -e "ssh -p 2222" user@MyMacBook.local:/src/ /dest/
 rsync -avz --exclude='.DS_Store' --exclude='__MACOSX' user@MyMacBook.local:/src/ /dest/
 ```
 
+### Exclude multiple files
+
+Chain multiple `--exclude` flags:
+
+```sh
+rsync -avz --exclude='.DS_Store' --exclude='Thumbs.db' --exclude='*.log' source/ destination/
+```
+
+Or use an exclude file for many patterns:
+
+```sh
+rsync -avz --exclude-from='exclude.txt' source/ destination/
+```
+
+Where `exclude.txt` contains one pattern per line:
+
+```
+.DS_Store
+__MACOSX
+Thumbs.db
+*.log
+.git/
+```
+
 ---
 
 ## 9. Source Path Trailing Slash — Important
