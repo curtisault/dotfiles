@@ -24,6 +24,7 @@ vim.opt.clipboard = 'unnamedplus'
 
 vim.opt.cursorline = true
 vim.opt.swapfile = false
+vim.opt.updatetime = 1000
 
 
 -- colorschemes

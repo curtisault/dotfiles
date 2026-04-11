@@ -1,3 +1,6 @@
+require("mini.ai").setup()
+require("mini.diff").setup()
+require("mini.sessions").setup()
 require("mini.basics").setup()
 require("mini.comment").setup()
 require("mini.pick").setup({
