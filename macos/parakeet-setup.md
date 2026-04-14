@@ -56,31 +56,39 @@ cp build/parakeet ~/.local/bin/
 
 ## Install Models
 
-Models are distributed as `.nemo` files on HuggingFace and must be converted to safetensors format.
+Models are distributed as `.nemo` files on HuggingFace and must be converted to safetensors format using `torch` and `safetensors`. Use `uv run` to avoid creating a persistent venv — it handles the deps inline and cleans up after itself. Note `torch` is ~2 GB so the first run will take a few minutes to download.
 
 ```bash
-pip install safetensors torch torchaudio huggingface_hub
+# Download the model (note: use `hf`, not `huggingface-cli` — the latter is deprecated)
+hf download nvidia/parakeet-tdt_ctc-110m --include '*.nemo' --local-dir .
 
-# Option A: Via Minutes setup (recommended)
-minutes setup --parakeet                                    # tdt-600m (~1.2 GB), multilingual
-minutes setup --parakeet --parakeet-model tdt-ctc-110m     # tdt-ctc-110m (~220 MB), English only
-# Also installs native Silero VAD weights automatically
+# Convert to safetensors using uv (no venv setup needed)
+mkdir -p ~/.minutes/models/parakeet
+uv run --with torch --with safetensors --with packaging --with numpy python scripts/convert_nemo.py *.nemo \
+  -o ~/.minutes/models/parakeet/tdt-ctc-110m.safetensors
 
-# Option B: Manual
-hf download nvidia/parakeet-tdt-0.6b-v3 parakeet-tdt-0.6b-v3.nemo --local-dir .
-cd parakeet.cpp
+# Extract the vocab file from the .nemo archive (it's a tarball)
+# Note: macOS BSD tar doesn't support --wildcards, so we resolve the filename first
+tar xf *.nemo --strip-components=1 $(tar tf *.nemo | grep 'vocab\.txt')
+cp *vocab.txt ~/.minutes/models/parakeet/vocab.txt
+```
+
+For the larger multilingual model (`tdt-600m`):
+
+```bash
+hf download nvidia/parakeet-tdt-0.6b-v2 --include '*.nemo' --local-dir .
 mkdir -p ~/.minutes/models/parakeet/tdt-600m
-python scripts/convert_nemo.py parakeet-tdt-0.6b-v3.nemo \
+uv run --with torch --with safetensors --with packaging --with numpy python scripts/convert_nemo.py parakeet-tdt-0.6b-v2.nemo \
   -o ~/.minutes/models/parakeet/tdt-600m/tdt-600m.safetensors \
   --model 600m-tdt
 
-# Convert Silero VAD weights (only needed if not using `minutes setup`)
-python scripts/convert_silero_vad.py \
-  -o ~/.minutes/models/parakeet/silero_vad_v5.safetensors
+# Extract the SentencePiece tokenizer vocab (macOS BSD tar: resolve filename first)
+tar xf parakeet-tdt-0.6b-v2.nemo --strip-components=1 $(tar tf parakeet-tdt-0.6b-v2.nemo | grep 'tokenizer\.vocab')
+cp *tokenizer.vocab ~/.minutes/models/parakeet/tdt-600m/tdt-600m.tokenizer.vocab
 
-# Extract the SentencePiece tokenizer vocab
-tar xf parakeet-tdt-0.6b-v3.nemo --wildcards --no-anchored '*tokenizer.vocab'
-cp *_tokenizer.vocab ~/.minutes/models/parakeet/tdt-600m/tdt-600m.tokenizer.vocab
+# Convert Silero VAD weights
+uv run --with torch --with safetensors --with packaging --with numpy --with torchaudio python scripts/convert_silero_vad.py \
+  -o ~/.minutes/models/parakeet/silero_vad_v5.safetensors
 ```
 
 If you have multiple models installed, keep each in its own directory with model-specific filenames (e.g. `tdt-600m/tdt-600m.tokenizer.vocab`) so model switches stay deterministic.
