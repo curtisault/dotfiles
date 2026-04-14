@@ -22,7 +22,7 @@ brew install \
     openbao pass pgcli podman podman-tui postgresql@17 pv \
     qsv ripgrep rsync \
     sops starship stow \
-    taskwarrior-tui tlrc tmux tmux-mem-cpu-load \
+    taskwarrior-tui tlrc tmux tmux-mem-cpu-load tree-sitter-cli \
     vhs vim wget xh yazi
 ```
 
@@ -288,8 +288,10 @@ set -g @continuum-restore 'on'
 [Neovim](https://neovim.io/) is a hyperextensible Vim-based text editor.
 
 ```bash
-brew install neovim
+brew install neovim tree-sitter-cli
 ```
+
+`tree-sitter-cli` is required by nvim-treesitter to compile language parsers.
 
 Config: `~/.config/nvim/` (managed via `stow nvim`)
 
