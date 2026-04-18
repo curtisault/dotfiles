@@ -193,6 +193,43 @@ setup_cronie() {
     log_success "cronie installed and enabled"
 }
 
+setup_lynis() {
+    log_info "Setting up lynis..."
+    pacman_install lynis
+    log_success "lynis installed"
+}
+
+setup_cronjobs() {
+    log_info "Setting up cron jobs..."
+
+    local crontab_file
+    crontab_file="$(cd "$(dirname "$0")" && cd ../../cronjobs/cachy_os && pwd)/crontab"
+
+    if [ ! -f "$crontab_file" ]; then
+        log_error "Crontab file not found at $crontab_file"
+        return 1
+    fi
+
+    crontab "$crontab_file"
+    log_success "Cron jobs installed from $crontab_file"
+
+    # Setup passwordless sudo for cron jobs that need it
+    local sudoers_file="/etc/sudoers.d/cronjobs"
+    if [ ! -f "$sudoers_file" ]; then
+        log_info "Setting up passwordless sudo for cron jobs..."
+        sudo tee "$sudoers_file" > /dev/null << 'EOF'
+curtisault ALL=(ALL) NOPASSWD: /usr/bin/lynis
+curtisault ALL=(ALL) NOPASSWD: /usr/bin/paccache
+EOF
+        sudo chmod 440 "$sudoers_file"
+        log_success "Sudoers config written for cron jobs"
+    else
+        log_info "Sudoers config for cron jobs already exists"
+    fi
+
+    mkdir -p ~/logs
+}
+
 setup_pass() {
     log_info "Setting up pass..."
 
@@ -250,6 +287,8 @@ main() {
     # System
     setup_keyd || ((failed++))
     setup_cronie || ((failed++))
+    setup_lynis || ((failed++))
+    setup_cronjobs || ((failed++))
     echo
     setup_pass || ((failed++))
     echo
