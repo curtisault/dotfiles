@@ -1,0 +1,19 @@
+#!/bin/bash
+# Downloads and installs the nightly build of lightpanda
+
+set -euo pipefail
+
+INSTALL_DIR="$HOME/.local/bin"
+URL="https://github.com/lightpanda-io/browser/releases/download/nightly/lightpanda-x86_64-linux"
+TMP=$(mktemp)
+
+cleanup() { rm -f "$TMP"; }
+trap cleanup EXIT
+
+if curl -fSL -o "$TMP" "$URL"; then
+    chmod a+x "$TMP"
+    mv "$TMP" "$INSTALL_DIR/lightpanda"
+    notify-send "Lightpanda" "Nightly build installed successfully."
+else
+    notify-send -u critical "Lightpanda" "Failed to download nightly build."
+fi
