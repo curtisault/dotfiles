@@ -186,6 +186,13 @@ EOF
     log_success "keyd installed and enabled"
 }
 
+setup_cronie() {
+    log_info "Setting up cronie..."
+    pacman_install cronie
+    sudo systemctl enable --now cronie
+    log_success "cronie installed and enabled"
+}
+
 setup_pass() {
     log_info "Setting up pass..."
 
@@ -242,6 +249,7 @@ main() {
 
     # System
     setup_keyd || ((failed++))
+    setup_cronie || ((failed++))
     echo
     setup_pass || ((failed++))
     echo
