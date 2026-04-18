@@ -5,15 +5,23 @@ set -euo pipefail
 
 INSTALL_DIR="$HOME/.local/bin"
 URL="https://github.com/lightpanda-io/browser/releases/download/nightly/lightpanda-x86_64-linux"
-TMP=$(mktemp)
 
+# Set environment for notify-send when running from cron
+export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
+
+TMP=$(mktemp)
 cleanup() { rm -f "$TMP"; }
 trap cleanup EXIT
 
+echo "Downloading lightpanda nightly from $URL..."
 if curl -fSL -o "$TMP" "$URL"; then
+    echo "Download complete. Installing to $INSTALL_DIR/lightpanda..."
     chmod a+x "$TMP"
     mv "$TMP" "$INSTALL_DIR/lightpanda"
+    echo "Installed successfully: $("$INSTALL_DIR/lightpanda" --version 2>&1 || true)"
     notify-send "Lightpanda" "Nightly build installed successfully."
 else
+    echo "ERROR: Failed to download nightly build."
     notify-send -u critical "Lightpanda" "Failed to download nightly build."
+    exit 1
 fi
