@@ -1,39 +1,21 @@
-local cmp = require('cmp')
-
--- Tab completion from docs
--- https://github.com/hrsh7th/nvim-cmp/wiki/Example-mappings#luasnip
-cmp.setup({
-  sources = {
-    {name = 'nvim_lsp'},
-  },
-  mapping = {
-    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-o>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.abort(),
-    ['<CR>'] = cmp.mapping.confirm({ select = true }),
-
-    ['<C-y>'] = cmp.mapping.confirm({select = false}),
-    ['<Up>'] = cmp.mapping.select_prev_item({behavior = 'select'}),
-    ['<Down>'] = cmp.mapping.select_next_item({behavior = 'select'}),
-    ['<C-p>'] = cmp.mapping(function()
-      if cmp.visible() then
-        cmp.select_prev_item({behavior = 'insert'})
-      else
-        cmp.complete()
-      end
-    end),
-    ['<C-n>'] = cmp.mapping(function()
-      if cmp.visible() then
-        cmp.select_next_item({behavior = 'insert'})
-      else
-        cmp.complete()
-      end
-    end),
-  },
-  snippet = {
-    expand = function(args)
-      require('luasnip').lsp_expand(args.body)
-    end,
-  },
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if client and client.server_capabilities.completionProvider then
+      vim.lsp.completion.enable(true, args.data.client_id, args.buf, { autotrigger = true })
+    end
+  end,
 })
+
+-- Confirm completion with <CR>
+vim.keymap.set('i', '<CR>', function()
+  if vim.fn.pumvisible() == 1 then
+    return '<C-y>'
+  end
+  return '<CR>'
+end, { expr = true })
+
+-- Trigger manual completion
+vim.keymap.set('i', '<C-o>', function()
+  vim.lsp.completion.trigger()
+end)
