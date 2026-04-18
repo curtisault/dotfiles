@@ -1,3 +1,13 @@
+#!/usr/bin/env fish
+
+if test -f $HOME/.secrets.fish
+    source $HOME/.secrets.fish
+else
+    set_color yellow
+    echo "⚠️  $HOME/.secrets not found"
+    set_color normal
+end
+
 if status is-interactive
     # Commands to run in interactive sessions can go here
 
@@ -14,6 +24,23 @@ if status is-interactive
     end
 
     fish_greeting
+end
+
+function fish_greeting
+    clear
+    echo ""
+    set_color --bold cyan
+    echo "╔════════════════════════════════════════════════════╗"
+
+    echo "║ 🐠 Welcome, "(whoami)"!                            ║"
+
+    set_color --bold green
+    echo "║    "(date "+%A, %B %d, %Y")"                       ║"
+
+    set_color yellow
+    echo "╚════════════════════════════════════════════════════╝"
+    echo ""
+    set_color normal
 end
 
 # stats
