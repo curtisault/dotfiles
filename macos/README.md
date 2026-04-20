@@ -79,7 +79,13 @@ atuin import auto
 
 ### 9. Install tmux plugins
 
-Open tmux and press `prefix + I` to install plugins via tpm.
+Clone tpm:
+
+```bash
+git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+```
+
+Open tmux and press `prefix + I` to install plugins.
 
 ---
 
@@ -261,7 +267,8 @@ Config: `~/.config/tmux/tmux.conf` (managed via `stow tmux`)
 Install plugins via [tpm](https://github.com/tmux-plugins/tpm):
 
 ```bash
-# Inside tmux, press prefix + I to install plugins
+git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+# Then inside tmux, press prefix + I to install plugins
 ```
 
 #### Saving & Restoring Sessions
