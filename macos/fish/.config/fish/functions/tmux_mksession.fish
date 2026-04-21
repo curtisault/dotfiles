@@ -16,5 +16,6 @@ function tmux_mksession
     tmux new-window -t $session -n git
     tmux new-window -t $session -n claudius
     tmux new-window -t $session -n github
+    tmux new-window -t $session -n db
     tmux select-window -t $session:nvim
 end
