@@ -115,6 +115,7 @@
 history_filter = [
   "^cd", 
   "^sf",
+  "^mkdir",
   "^less",
   "^ls($| )",
   "^la($| )",
