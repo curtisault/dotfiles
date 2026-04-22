@@ -23,6 +23,10 @@ if status is-interactive
         atuin init fish | source
     end
 
+    if command -v direnv > /dev/null
+        direnv hook fish | source
+    end
+
     fish_greeting
 end
 
