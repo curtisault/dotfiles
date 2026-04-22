@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+# compress_vid — compress video using H.265 (HEVC) with maximum efficiency
+#
+# Usage:
+#   compress_vid [options] <input> <output>
+#
+# Options:
+#   -q <crf>    CRF quality (18=near-lossless, 24=default, 32=smaller)
+#   -s <width>  Scale width in pixels, height auto-calculated
+#
+# Examples:
+#   compress_vid input.mov output.mp4                    # default settings
+#   compress_vid -q 28 input.mov output.mp4              # smaller file, lower quality
+#   compress_vid -q 18 input.mov output.mp4              # near-lossless, larger file
+#   compress_vid -s 1728 input.mov output.mp4            # half resolution (retina → standard)
+#   compress_vid -q 28 -s 1728 input.mov output.mp4     # smaller + scaled down
+#   compress_vid -q 24 -s 1280 input.mov output.mp4     # 1280px wide, balanced quality
+
+set -e
+
+usage() {
+  echo "Usage: compress_vid [-q <crf>] [-s <width>] <input> <output>"
+  echo "  -q  CRF quality (18=near-lossless, 24=default, 32=smaller)"
+  echo "  -s  Scale width in pixels, height auto-calculated (e.g. 1728)"
+  exit 1
+}
+
+command -v ffmpeg &>/dev/null || { echo "Error: ffmpeg not installed"; exit 1; }
+
+CRF=24
+SCALE=""
+while getopts "q:s:" opt; do
+  case $opt in
+    q) CRF="$OPTARG" ;;
+    s) SCALE="$OPTARG" ;;
+    *) usage ;;
+  esac
+done
+shift $((OPTIND - 1))
+
+[ "$#" -ne 2 ] && usage
+
+INPUT="$1"
+OUTPUT="$2"
+[ ! -f "$INPUT" ] && { echo "Error: '$INPUT' not found"; exit 1; }
+[ -f "$OUTPUT" ] && { echo "Error: '$OUTPUT' already exists, remove it first"; exit 1; }
+
+VF_FILTER=""
+[ -n "$SCALE" ] && VF_FILTER="-vf scale=${SCALE}:-2"
+
+echo "Encoding (CRF=$CRF${SCALE:+, scale=${SCALE}})..."
+ffmpeg -v quiet -stats -i "$INPUT" $VF_FILTER -vcodec libx265 -crf "$CRF" -preset veryslow \
+  -tag:v hvc1 -acodec aac -b:a 128k "$OUTPUT"
+
+echo "Done: $OUTPUT"
