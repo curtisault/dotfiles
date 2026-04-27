@@ -77,3 +77,8 @@ vim.keymap.set('n', '<leader>ff', '<cmd>Pick files<CR>')
 vim.keymap.set('n', '<leader>fg', '<cmd>Pick grep_live<CR>')
 vim.keymap.set('n', '<leader>fb', '<cmd>Pick buffers<CR>')
 
+
+------ File Tree ------
+vim.keymap.set('n', '<leader>e', '<cmd>NvimTreeToggle<CR>', { desc = 'Toggle file tree' })
+vim.keymap.set('n', '<leader>o', '<cmd>NvimTreeFindFile<CR>', { desc = 'Reveal current file in tree' })
+
