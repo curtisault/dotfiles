@@ -1,5 +1,6 @@
 [tools]
 elixir = "latest"
+elm = { version = "latest", bin = "elm" }
 erlang = "latest"
 node = "latest"
 python = "latest"
