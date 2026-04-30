@@ -78,6 +78,10 @@ vim.keymap.set('n', '<leader>fg', '<cmd>Pick grep_live<CR>')
 vim.keymap.set('n', '<leader>fb', '<cmd>Pick buffers<CR>')
 
 
+------ Git ------
+vim.keymap.set('n', '<leader>g', '<cmd>Git<CR>', { desc = 'Open Git' })
+
+
 ------ File Tree ------
 vim.keymap.set('n', '<leader>e', '<cmd>NvimTreeToggle<CR>', { desc = 'Toggle file tree' })
 vim.keymap.set('n', '<leader>o', '<cmd>NvimTreeFindFile<CR>', { desc = 'Reveal current file in tree' })
