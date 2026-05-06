@@ -71,14 +71,14 @@
         (lua-mode        . lua-ts-mode)
         (python-mode     . python-ts-mode)
         (rust-mode       . rust-ts-mode)
-        (typescript-mode . typescript-ts-mode)
         (yaml-mode       . yaml-ts-mode)))
 
 ;; .ts / .tsx have no upstream major-mode registration — wire them up directly.
 (add-to-list 'auto-mode-alist '("\\.ts\\'"  . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 
-;; Note: elixir-ts-mode registers itself for .ex/.exs directly.
-;; Note: rust-ts-mode (built-in) registers itself for .rs directly.
+;; Note: elixir-ts-mode registers itself for .ex/.exs/.heex directly.
+;; Note: .rs is registered by the third-party `rust-mode' package, then
+;; remapped to rust-ts-mode via major-mode-remap-alist above.
 
 ;;; treesit.el ends here

@@ -199,11 +199,23 @@
 ;; ============================================================================
 
 ;; Use system clipboard (matching nvim's clipboard = 'unnamedplus').
-;; Modern Emacs handles macOS pbcopy/pbpaste natively via NS bindings — no
-;; shell-out required.
+;; Modern Emacs handles macOS pbcopy/pbpaste natively via NS bindings in the
+;; GUI build, but in `emacs -nw' there is no NS connection — shell out to
+;; pbcopy/pbpaste explicitly.
 (setq select-enable-clipboard t
       select-enable-primary t
       save-interprogram-paste-before-kill t)
+
+(when (and (eq system-type 'darwin) (not (display-graphic-p)))
+  (defun my/pbcopy (text &optional _push)
+    (let ((process-connection-type nil))
+      (let ((proc (start-process "pbcopy" nil "pbcopy")))
+        (process-send-string proc text)
+        (process-send-eof proc))))
+  (defun my/pbpaste ()
+    (shell-command-to-string "pbpaste"))
+  (setq interprogram-cut-function   #'my/pbcopy
+        interprogram-paste-function #'my/pbpaste))
 
 ;; ============================================================================
 ;; Theme - Catppuccin Frappé
@@ -284,6 +296,31 @@
   :hook (prog-mode . rainbow-delimiters-mode))
 
 ;; ============================================================================
+;; File Tree - treemacs
+;; ============================================================================
+
+(use-package treemacs
+  :defer t
+  :config
+  (setq treemacs-width 35
+        treemacs-follow-after-init t
+        treemacs-is-never-other-window t)
+  (treemacs-follow-mode 1)
+  (treemacs-filewatch-mode 1)
+  (treemacs-fringe-indicator-mode 'always))
+
+(use-package treemacs-evil
+  :after (treemacs evil))
+
+(use-package treemacs-magit
+  :after (treemacs magit))
+
+(use-package treemacs-nerd-icons
+  :after (treemacs nerd-icons)
+  :config
+  (treemacs-load-theme "nerd-icons"))
+
+;; ============================================================================
 ;; Org Mode (extracted to org-config.el)
 ;; ============================================================================
 
@@ -314,9 +351,7 @@
 ;; Major Mode Packages (needed for treesit remap to work)
 ;; ============================================================================
 
-;; Elixir with tree-sitter support
-(use-package elixir-ts-mode
-  :straight (elixir-ts-mode :type git :host github :repo "wkirschbaum/elixir-ts-mode"))
+;; elixir-ts-mode and heex-ts-mode are built-in as of Emacs 30.
 
 (use-package lua-mode)
 (use-package yaml-mode)

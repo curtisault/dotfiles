@@ -76,7 +76,8 @@
 
 
 ;;;; ------ File Tree ------
-;; (placeholder — wire up when treemacs / dired-sidebar / neotree is added)
+(evil-define-key 'normal 'global (kbd "<leader>e") 'treemacs)
+(evil-define-key 'normal 'global (kbd "<leader>o") 'treemacs-find-file)
 
 
 ;;;; ------------- Emacs-specific -------------

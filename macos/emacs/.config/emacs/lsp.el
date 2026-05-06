@@ -8,12 +8,13 @@
 
 (use-package eglot
   :straight nil  ; Built-in to Emacs 29+
-  :hook ((elixir-ts-mode     . eglot-ensure)
-         (python-ts-mode     . eglot-ensure)
-         (lua-mode           . eglot-ensure)
-         (js-ts-mode         . eglot-ensure)
-         (typescript-ts-mode . eglot-ensure)
-         (rust-ts-mode       . eglot-ensure))
+  :hook ((elixir-ts-mode          . eglot-ensure)
+         (python-ts-mode          . eglot-ensure)
+         (lua-mode                . eglot-ensure)
+         (js-ts-mode              . eglot-ensure)
+         ;; Covers both typescript-ts-mode and tsx-ts-mode (sibling derived modes)
+         (typescript-ts-base-mode . eglot-ensure)
+         (rust-ts-mode            . eglot-ensure))
   :config
   (setq eglot-autoshutdown t                   ; Shutdown server when last buffer is killed
         eglot-sync-connect nil                 ; Don't block on connection
