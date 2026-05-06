@@ -67,4 +67,8 @@
 
 ;; Evil bindings for Org mode are also provided by evil-collection.
 
+(use-package ob-mermaid
+  :custom (ob-mermaid-cli-path "/path/to/mmdc"))
+(org-babel-do-load-languages 'org-babel-load-languages '((mermaid . t)))
+
 ;;; org-config.el ends here
