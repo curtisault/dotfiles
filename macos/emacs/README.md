@@ -1,45 +1,31 @@
-# Terminal Emacs with Native Compilation
+# Terminal-First Emacs (with GUI Polish on macOS)
 
-**Terminal-only Emacs configuration** with vim keybindings (Evil mode) and native compilation support.
-
-This configuration is designed specifically for terminal use (`emacs -nw`) with no GUI dependencies. Perfect for developers who want Emacs power with vim muscle memory in a terminal environment.
+Custom Emacs build + configuration with vim keybindings (Evil), native
+compilation, tree-sitter, eglot, a Doom-style dashboard, and Catppuccin
+Frappé theming. Targets `emacs -nw` first but gives a clean GUI experience
+on macOS too (transparent dark titlebar, maximized frame).
 
 ## Building Emacs
 
 ### Quick Start
 
 ```bash
-# Build and install Emacs 29.4 (default)
-./build-emacs.sh
-
-# Build a different version
-./build-emacs.sh -v emacs-30
-
-# Build from master branch
-./build-emacs.sh -v master
-
-# Install to custom location
-./build-emacs.sh -p ~/.local
-
-# Build without installing
-./build-emacs.sh --no-install
+./build-emacs.sh                  # build & install Emacs 29.4
+./build-emacs.sh -v emacs-30      # different release branch
+./build-emacs.sh -v master        # bleeding edge
+./build-emacs.sh -p ~/.local      # custom install prefix
+./build-emacs.sh --no-install     # build without installing
 ```
 
-### What Gets Built
+### What gets built
 
-The build script configures Emacs with:
+- **Native compilation** (`--with-native-compilation=aot`)
+- **Terminal + macOS NS** (no X11)
+- **GnuTLS, JSON, tree-sitter** support
+- **rsvg** for SVG rendering
+- Source clones to `~/src/emacs`
 
-- **Native compilation** (`--with-native-compilation=aot`) - Compiles Elisp to native code for better performance
-- **Terminal-only** - No GUI support (X11 or macOS native)
-- **GnuTLS** - For secure package downloads
-- **JSON support** - Required by many modern packages
-- **Tree-sitter** - Modern syntax highlighting
-
-### Build Location
-
-Source code is cloned to: `~/src/emacs`
-
-### Verifying Native Compilation
+Verify native comp:
 
 ```bash
 emacs --batch --eval '(message "Native comp: %s" (native-comp-available-p))'
@@ -47,168 +33,217 @@ emacs --batch --eval '(message "Native comp: %s" (native-comp-available-p))'
 
 ## Configuration
 
-### Installing the Configuration
+### Layout
 
-```bash
-mkdir -p ~/.emacs.d
-cp init.el ~/.emacs.d/init.el
-cp early-init.el ~/.emacs.d/early-init.el
+The config is split into focused modules, all loaded from `init.el`:
+
+```
+~/.config/emacs/
+├── early-init.el      — startup GC tuning, frame appearance (dark, maximized)
+├── init.el            — core defaults, package mgr, theme, glue
+├── dashboard.el       — Doom-style splash with shortcuts cheatsheet
+├── completion.el      — vertico + orderless + consult + marginalia + embark + corfu + cape
+├── lsp.el             — eglot config (cross-workspace xref, perf knobs)
+├── treesit.el         — tree-sitter grammars, auto-install, font-lock level 4
+├── modeline.el        — custom mode-line with Evil-state pill
+├── org-config.el      — org mode + evil bindings (~/notes/)
+├── keybindings.el     — global keymap, mirrors nvim's remap.lua sections
+└── assets/
+    └── banner.txt     — text banner shown by the dashboard
 ```
 
-### First Launch Setup
+### Deploy with stow
 
-1. **Start Emacs:**
-   ```bash
-   emacs -nw
-   ```
+```bash
+cd ~/dotfiles/macos
+stow -t ~ emacs           # symlink ~/.config/emacs → this package
+stow -t ~ -R emacs        # restow after structural changes
+stow -t ~ -D emacs        # unlink
+```
 
-2. **Install Tree-sitter Grammars** (for syntax highlighting):
-   ```
-   M-x install-treesit-grammars
-   ```
-   This installs grammars for: Elixir, Lua, Python, JavaScript, TypeScript, JSON, YAML, and more.
-   Takes a few minutes to compile. You only need to do this once.
+`build-emacs.sh`, `uninstall-emacs.sh`, this README, and `.gitignore` stay
+at the package root and are excluded via `.stow-local-ignore`.
 
-3. **Wait for Packages to Install:**
-   On first launch, straight.el will clone and install all packages. This takes a few minutes.
-   Native compilation will compile packages in the background.
+### First Launch
+
+1. **Start Emacs:** `emacs` (GUI) or `emacs -nw` (terminal).
+2. **straight.el** clones every package in the background (~1–3 min).
+3. **Tree-sitter grammars** auto-install on first idle after startup
+   (compiles all of bash/css/elixir/heex/html/js/json/lua/python/rust/toml/tsx/typescript/yaml).
+   Subsequent launches are no-ops.
+4. **Nerd Font glyphs** for the dashboard navigator: run
+   `M-x nerd-icons-install-fonts` once. Restart for glyphs to render.
+
+The dashboard appears as the startup buffer.
+
+## Performance Tuning Already Applied
+
+- **Deferred GC at startup** in `early-init.el`, restored in `emacs-startup-hook`
+- **`gcmh`** for adaptive runtime garbage collection
+- **`file-name-handler-alist nil`** during init (TRAMP/archive handlers off)
+- **`read-process-output-max`** raised to 4 MiB for eglot transport
+- **`eglot-events-buffer-size 0`** + **`eglot-send-changes-idle-time 0.5`**
+- **`treesit-font-lock-level 4`** for full syntax detail
+- **Native compilation AOT** (compiled at build time, no runtime warmup)
+
+## Quality-of-Life Defaults
+
+- **`vc-follow-symlinks t`** — no prompts when editing stowed dotfiles
+- **`use-short-answers t`** — y/n instead of yes/no everywhere
+- **`recentf-mode`**, **`savehist-mode`**, **`save-place-mode`** — persistent
+  recent files / minibuffer history / cursor position
+- **No backup files / lockfiles / autosaves** — git is the source of truth
+- **Trailing whitespace stripped on save** — only in `prog-mode` (never in markdown/diffs)
+- **Full system clipboard integration** (Emacs's native NS bindings)
+
+## Theme + UI
+
+- **Catppuccin Frappé** color scheme
+- **`ns-transparent-titlebar` + `ns-appearance dark`** — macOS titlebar blends with buffer
+- **`fullscreen . maximized`** — frame opens filling the screen
+- **Custom mode-line**: Evil-state pill, git branch, eglot indicator,
+  flymake counts, project-relative filename, line:col + percentage
+- **Nerd-icons** in the dashboard navigator + `marginalia` annotations
+- **Relative line numbers** in `prog-mode`
+
+## Dashboard
+
+A Doom-style splash on startup:
+
+- ASCII banner (`assets/banner.txt`)
+- Title quote, navigator buttons, and rotating Tolkien-flavored footer
+- Sections: Recent Files, Projects, Bookmarks, Agenda (today + week), Shortcuts
+- A `notes` bookmark is auto-created on first launch (`~/notes/`)
+
+### Single-key shortcuts (active in `*dashboard*`)
+
+| Key | Action |
+| --- | --- |
+| `p` | Switch project |
+| `n` | Open `~/notes/` |
+| `a` | Org agenda |
+| `r` | Recent files (consult) |
+| `m` | Magit status |
+| `q` | Close dashboard |
+| `g r` | Refresh dashboard |
 
 ## Features
 
-This configuration provides a complete development environment matching your nvim setup:
+### Core
+- **Evil Mode** — full vim keybindings + evil-collection
+- **straight.el** — package manager
+- **which-key** — keybinding hints after 0.5s
 
-### Core Features
-- **Evil Mode** - Full vim keybindings
-- **Catppuccin Frappé Theme** - Beautiful color scheme
-- **Straight.el** - Modern package manager
-- **Relative Line Numbers** - Like vim's relativenumber
-- **System Clipboard** - Yank/paste works with system clipboard
+### Editing
+- **rainbow-delimiters** — colorized matching brackets
+- **evil-nerd-commenter** — easy commenting
+- **hl-todo** — TODO/FIXME/HACK/IMPORTANT/NOTE highlighted in comments
 
-### Fuzzy Finding
-- **Vertico** - Vertical completion UI
-- **Consult** - Enhanced commands (ripgrep, buffer search, file finding)
-- **Orderless** - Fuzzy matching
-- **Marginalia** - Helpful annotations
-- **Embark** - Actions on completion candidates
+### Fuzzy / Search
+- **vertico**, **orderless**, **consult**, **marginalia**, **embark**
 
-### Development Tools
-- **Eglot** - Built-in LSP client (Elixir, Python, Lua, JS, TS)
-- **Corfu** - In-buffer completion
-- **Tree-sitter** - Modern syntax highlighting
-- **Magit** - Powerful git interface
-- **Project.el** - Project management
-
-### UI Enhancements
-- **Which-key** - Keybinding hints after 0.5s
-- **hl-todo** - Highlight TODO/FIXME/NOTE/HACK in comments
-- **Evil-nerd-commenter** - Easy commenting
+### Development
+- **eglot** — built-in LSP (Elixir, Python, Lua, JS/TS, Rust)
+- **corfu** + **cape** — in-buffer completion + completion-at-point extensions
+- **tree-sitter** — modern syntax highlighting with grammar auto-install
+- **magit** — git porcelain
+- **project.el** — project management
+- **pgmacs** — Postgres client (loaded if `tss-db-config.el` is present)
 
 ## Key Bindings
 
-### Vim Basics (Evil Mode)
-- `h j k l` - Movement
-- `w b e` - Word movement
-- `0 $` - Line start/end
-- `gg G` - Buffer start/end
-- `d y p` - Delete, yank, paste
-- `u C-r` - Undo, redo
-- `/ ?` - Search forward/backward
-- `n N` - Next/previous match
-- `:` - Command mode
-- `v V C-v` - Visual mode (char, line, block)
+### Vim Basics (Evil)
 
-### Leader Key (Space)
+`h j k l` movement, `w b e` word motion, `0 $` line bounds, `gg G` buffer
+bounds, `d y p` delete/yank/paste, `u C-r` undo/redo, `/ ?` search,
+`n N` next/prev match, `:` ex commands, `v V C-v` visual modes.
 
-**Files:**
-- `SPC ff` - Find files
-- `SPC fg` - Live grep (ripgrep)
-- `SPC fb` - Switch buffers
+### Leader (`SPC`)
 
-**Git:**
-- `SPC gs` - Git status (magit)
-- `C-x g` - Git status (alternative)
+| Key | Action |
+| --- | --- |
+| **Files** | |
+| `SPC ff` | Find file |
+| `SPC fg` | Live grep (consult-ripgrep) |
+| `SPC fb` | Switch buffer |
+| **Diagnostics** | |
+| `SPC dt` | `consult-flymake` |
+| **Git** | |
+| `SPC gs` | Magit status |
+| `C-x g` | Magit status (alt) |
+| **Project** | |
+| `SPC pf` | Project find file |
+| `SPC ps` | Project shell |
+| `SPC pg` | Project grep |
+| **LSP** | |
+| `SPC lr` | Rename symbol |
+| `SPC la` | Code actions |
+| `SPC lf` | Format buffer |
+| `SPC ld` | Go to definition |
+| `SPC li` | Find references |
+| **Windows** | |
+| `SPC wl` / `SPC wj` | Vsplit / split |
+| `SPC wd` | Close window |
+| `C-h/j/k/l` | Navigate windows |
+| `S-arrows` | Resize |
+| **Tabs** | |
+| `tt`/`tn` | New tab |
+| `th`/`tl` | First / last |
+| `tj`/`tk` | Prev / next |
+| `td` | Close |
+| **Buffers** | |
+| `[` / `]` | Prev / next buffer |
+| `C-x C-b` | ibuffer |
+| **Database** | |
+| `SPC db` | pgmacs |
 
-**Project:**
-- `SPC pf` - Project find file
-- `SPC ps` - Project shell
-- `SPC pg` - Project grep
+### Org leader (in `org-mode` buffers)
 
-**LSP:**
-- `SPC lr` - Rename symbol
-- `SPC la` - Code actions
-- `SPC lf` - Format buffer
-- `SPC ld` - Go to definition
-- `SPC li` - Find references
+`SPC ot` time-stamp · `SPC os` schedule · `SPC od` deadline · `SPC oq` tags ·
+`SPC oa` archive · `SPC or` refile · `SPC ol` insert link · `SPC oe` export ·
+`SPC oc` toggle checkbox · `SPC oi` toggle inline images.
 
-**Windows:**
-- `SPC wl` - Split vertical
-- `SPC wj` - Split horizontal
-- `SPC wd` - Close window
-- `C-h/j/k/l` - Navigate windows
+Plus `M-h/j/k/l` for `org-meta{left,down,up,right}` and capital variants
+(`M-H/J/K/L`) for the shifted variants.
 
-**Tabs:**
-- `tt` - New tab
-- `th` - First tab
-- `tj` - Previous tab
-- `tk` - Next tab
-- `tl` - Last tab
-- `td` - Close tab
+### Other useful
 
-### Other Useful Bindings
-- `M-;` - Comment/uncomment lines
-- `C-x C-b` - Buffer list (ibuffer)
-- `M-x` - Execute command
-- `C-g` - Cancel/quit
-- `C-.` - Embark actions (context menu)
-
-### Consult/Search
-- `M-s r` - Ripgrep in project
-- `M-s l` - Search lines in buffer
-- `C-x b` - Enhanced buffer switcher
+- `M-;` — comment/uncomment lines
+- `C-.` — embark act (context menu)
+- `C-;` — embark dwim
+- `M-s r` — consult-ripgrep
+- `M-s l` — consult-line in current buffer
+- `C-h e` — `*Messages*` buffer
+- `C-x b *Warnings* RET` — warnings buffer
 
 ## Tips
 
-### Learning Emacs/Evil
-- Press `SPC` and wait 0.5s to see available keybindings (which-key)
-- Use `M-x` to search for commands by name
-- `:help` or `C-h` for help system
-
-### Magit (Git)
-- `SPC gs` opens magit-status
-- `s` to stage, `u` to unstage
-- `c c` to commit
-- `P p` to push
-- `?` for help in magit buffers
-
-### LSP
-- LSP automatically activates for supported languages
-- Hover over symbols shows documentation
-- Use leader key LSP commands for refactoring
-
-### Tree-sitter
-- Automatically used for supported languages
-- If a file isn't highlighted, you may need to install its grammar:
-  ```
-  M-x treesit-install-language-grammar RET <language> RET
-  ```
+- Press `SPC` and wait 0.5s — which-key shows what's available.
+- `M-x` then start typing — every command is searchable; vertico + orderless
+  do flexible matching.
+- Magit: `s` stage / `u` unstage / `c c` commit / `P p` push / `?` for help.
+- LSP autoactivates for hooked modes (see `lsp.el`). Hover for docs,
+  `SPC lr` to rename, `SPC ld` to jump to definition.
+- Tree-sitter modes are picked automatically via `major-mode-remap-alist`.
+  Confirm via `M-x describe-mode` — should report `*-ts-mode`.
 
 ## Troubleshooting
 
-### Packages not installing
-- Check internet connection
-- Try `M-x straight-pull-all` to update packages
-- Check `*straight-process*` buffer for errors
+**Packages not installing** — check internet, run `M-x straight-pull-all`,
+inspect `*straight-process*` buffer.
 
-### LSP not working
-- Ensure language server is installed (e.g., `elixir-ls` for Elixir)
-- Check `:messages` buffer for errors
-- Try `M-x eglot-reconnect`
+**LSP not working** — confirm the server binary is on `PATH`
+(e.g. `elixir-ls`, `pyright`, `rust-analyzer`). Try `M-x eglot-reconnect`.
+Check `*Messages*` for errors.
 
-### No syntax highlighting
-- Run `M-x install-treesit-grammars` to install all grammars
-- Check that you're in a `-ts-mode` (e.g., `python-ts-mode` not `python-mode`)
+**No syntax highlighting** — `M-x install-treesit-grammars` (the startup
+hook does this on idle, but you can force it). Confirm with
+`M-: treesit-font-lock-level RET` (should be 4) and
+`M-: (treesit-language-available-p 'rust) RET` (or whichever language).
 
-### Performance issues
-- Native compilation runs in background on first launch - this is normal
-- Check `*Warnings*` buffer if things seem slow
-- Disable features you don't need in init.el
+**Dashboard navigator icons appear as boxes** — run
+`M-x nerd-icons-install-fonts RET y` and restart Emacs.
+
+**Slow startup** — run `M-x emacs-init-time` to confirm.
+The first launch is slow (straight clones + native-comp); subsequent
+launches should be < 2s. If not, check `*Warnings*`.

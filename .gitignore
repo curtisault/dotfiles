@@ -12,3 +12,14 @@ linux/tmux/.config/tmux/plugins/
 *~
 .vscode/
 .idea/
+/macos/emacs/.config/emacs/tree-sitter
+/macos/emacs/.config/emacs/straight
+/macos/emacs/.config/emacs/bookmarks
+/macos/emacs/.config/emacs/history
+/macos/emacs/.config/emacs/places
+/macos/emacs/.config/emacs/projects
+/macos/emacs/.config/emacs/recentf
+/macos/emacs/.config/emacs/eln-cache/
+/macos/emacs/.config/emacs/auto-save-list/
+/macos/emacs/.config/emacs/autosaves/
+/macos/emacs/.config/emacs/backups/

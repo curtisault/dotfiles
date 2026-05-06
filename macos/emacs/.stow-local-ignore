@@ -1,0 +1,5 @@
+^/build-emacs\.sh$
+^/uninstall-emacs\.sh$
+^/README\.md$
+^/\.gitignore$
+^/\.stow-local-ignore$
