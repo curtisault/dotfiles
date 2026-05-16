@@ -26,10 +26,14 @@ function tmux_mksession
     tmux new-window -t $session -n run -c $dir
     tmux split-window -h -t $session:run -c $dir
     tmux new-window -t $session -n git -c $dir
+    tmux send-keys -t $session:git lazygit Enter
     tmux new-window -t $session -n logs -c $dir
     tmux new-window -t $session -n db -c $dir
+    tmux send-keys -t $session:db 'pgcli -u postgres' Enter
     tmux new-window -t $session -n claudius -c $dir
+    tmux send-keys -t $session:claudius claude Enter
     tmux new-window -t $session -n claude-work -c $dir
-    tmux new-window -t $session -n claude-logs -c $dir 'fish -c claude_logs_tail'
+    tmux new-window -t $session -n claude-logs -c $dir
+    tmux send-keys -t $session:claude-logs claude_logs_tail Enter
     tmux select-window -t $session:nvim
 end
