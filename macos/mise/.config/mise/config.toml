@@ -2,6 +2,7 @@
 elixir = "latest"
 elm = { version = "latest", bin = "elm" }
 erlang = "latest"
+go = "latest"
 node = "latest"
 python = "latest"
 rust = "latest"
