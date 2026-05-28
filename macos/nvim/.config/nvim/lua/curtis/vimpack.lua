@@ -35,10 +35,6 @@ vim.pack.add({
   -- Markdown rendering
   'https://github.com/MeanderingProgrammer/render-markdown.nvim',
 
-  -- Claude Code
-  'https://github.com/folke/snacks.nvim',
-  'https://github.com/coder/claudecode.nvim',
-
   -- AgentFlow
   -- 'https://github.com/curtisault/agentflow.nvim',
 })
