@@ -44,3 +44,12 @@ require('mason-lspconfig').setup({
     end,
   },
 })
+
+-- OCaml: ocamllsp comes from the project's opam switch, not Mason.
+vim.lsp.enable('ocamllsp')
+
+-- Format OCaml on save (ocamlformat via ocamllsp; needs a .ocamlformat file).
+vim.api.nvim_create_autocmd('BufWritePre', {
+  pattern = { '*.ml', '*.mli' },
+  callback = function() vim.lsp.buf.format({ async = false }) end,
+})
