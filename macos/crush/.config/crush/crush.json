@@ -7,19 +7,19 @@
       "api_key": "lm-studio",
       "models": [
         {
-          "id": "zai-org/glm-4.7-flash",
-          "name": "GLM-4.7 Flash"
+          "id": "qwen3.6-35b-a3b-ud-mlx",
+          "name": "Qwen 3.6 35B"
         }
       ]
     }
   },
   "models": {
     "large": {
-      "model": "zai-org/glm-4.7-flash",
+      "model": "qwen3.6-35b-a3b-ud-mlx",
       "provider": "lmstudio"
     },
     "small": {
-      "model": "zai-org/glm-4.7-flash",
+      "model": "qwen3.6-35b-a3b-ud-mlx",
       "provider": "lmstudio"
     }
   }

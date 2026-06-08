@@ -1,0 +1,12 @@
+#!/bin/bash
+# ~/mlx-server.sh
+
+export MLX_MODEL="mlx-community/Qwen3-Coder-30B-A3B-Instruct-4bit"
+export MLX_PORT=8080
+
+mlx_lm.server \
+  --model "$MLX_MODEL" \
+  --port "$MLX_PORT" \
+  --host 127.0.0.1 \
+  --port 8080 \
+  --max-tokens 65536

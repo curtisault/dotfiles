@@ -23,6 +23,10 @@ if status is-interactive
         atuin init fish | source
     end
 
+    if command -v direnv > /dev/null
+        direnv hook fish | source
+    end
+
     fish_greeting
 end
 
@@ -73,3 +77,12 @@ end
 function lS
     command ls -1FSsh $argv
 end
+
+
+# BEGIN opam configuration
+# This is useful if you're using opam as it adds:
+#   - the correct directories to the PATH
+#   - auto-completion for the opam binary
+# This section can be safely removed at any time if needed.
+test -r '/Users/curtisault/.opam/opam-init/init.fish' && source '/Users/curtisault/.opam/opam-init/init.fish' > /dev/null 2> /dev/null; or true
+# END opam configuration

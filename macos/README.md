@@ -22,7 +22,7 @@ brew install \
     openbao pass pgcli podman podman-tui postgresql@17 pv \
     qsv ripgrep rsync \
     sops starship stow \
-    taskwarrior-tui tlrc tmux tmux-mem-cpu-load \
+    taskwarrior-tui tlrc tmux tmux-mem-cpu-load tree-sitter-cli \
     vhs vim wget xh yazi
 ```
 
@@ -79,7 +79,13 @@ atuin import auto
 
 ### 9. Install tmux plugins
 
-Open tmux and press `prefix + I` to install plugins via tpm.
+Clone tpm:
+
+```bash
+git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+```
+
+Open tmux and press `prefix + I` to install plugins.
 
 ---
 
@@ -261,7 +267,8 @@ Config: `~/.config/tmux/tmux.conf` (managed via `stow tmux`)
 Install plugins via [tpm](https://github.com/tmux-plugins/tpm):
 
 ```bash
-# Inside tmux, press prefix + I to install plugins
+git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+# Then inside tmux, press prefix + I to install plugins
 ```
 
 #### Saving & Restoring Sessions
@@ -288,8 +295,10 @@ set -g @continuum-restore 'on'
 [Neovim](https://neovim.io/) is a hyperextensible Vim-based text editor.
 
 ```bash
-brew install neovim
+brew install neovim tree-sitter-cli
 ```
+
+`tree-sitter-cli` is required by nvim-treesitter to compile language parsers.
 
 Config: `~/.config/nvim/` (managed via `stow nvim`)
 
