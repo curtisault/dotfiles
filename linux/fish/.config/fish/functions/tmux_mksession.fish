@@ -32,8 +32,5 @@ function tmux_mksession
     tmux send-keys -t $session:db pgcli Enter
     tmux new-window -t $session -n claudius -c $dir
     tmux send-keys -t $session:claudius claude Enter
-    tmux new-window -t $session -n claude-work -c $dir
-    tmux new-window -t $session -n claude-logs -c $dir
-    tmux send-keys -t $session:claude-logs claude_logs_tail Enter
     tmux select-window -t $session:nvim
 end
