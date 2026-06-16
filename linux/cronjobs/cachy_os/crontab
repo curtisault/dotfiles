@@ -1,0 +1,17 @@
+# Update lightpanda nightly build (10 AM and 10 PM daily)
+0 10,22 * * * /home/curtisault/dotfiles/linux/cronjobs/update-lightpanda
+
+# Lynis security audit (Sunday 3 AM)
+0 3 * * 0 sudo lynis audit system --quick >> ~/logs/lynis.log 2>&1
+
+# Clean trash items older than 30 days (1st of month, 4 AM)
+0 4 1 * * find ~/.local/share/Trash -mtime +30 -delete 2>/dev/null
+
+# Clean stale /tmp files older than 7 days (Sunday 4:30 AM)
+30 4 * * 0 find /tmp -type f -atime +7 -delete 2>/dev/null
+
+# Flush DNS cache (every 30 minutes)
+*/30 * * * * resolvectl flush-caches
+
+# Remove all cached versions of uninstalled packages (Sunday 3:30 AM)
+30 3 * * 0 sudo paccache -ruk0

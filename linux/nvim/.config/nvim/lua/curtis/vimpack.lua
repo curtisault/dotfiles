@@ -12,6 +12,7 @@ vim.pack.add({
 
   -- File explorer
   'https://github.com/stevearc/oil.nvim',
+  'https://github.com/nvim-tree/nvim-tree.lua',
 
   -- Git
   'https://github.com/tpope/vim-dispatch',
@@ -34,9 +35,6 @@ vim.pack.add({
   -- Markdown rendering
   'https://github.com/MeanderingProgrammer/render-markdown.nvim',
 
-  -- Claude Code
-  'https://github.com/folke/snacks.nvim',
-  'https://github.com/coder/claudecode.nvim',
 })
 
 -- Run TSUpdate after treesitter install/update
