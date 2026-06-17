@@ -44,7 +44,10 @@ vim.opt.updatetime = 1000
 -- ------ Catppuccin ------
 -- vim.cmd [[colorscheme catppuccin]]
 -- vim.cmd [[colorscheme catppuccin-latte]]
-vim.cmd [[colorscheme catppuccin-frappe]]
+-- vim.cmd [[colorscheme catppuccin-frappe]]
 -- vim.cmd [[colorscheme catppuccin-macchiato]]
 -- vim.cmd [[colorscheme catppuccin-mocha]]
+
+-- ------ everred (custom, warm-red modeled on Everforest) ------
+vim.cmd [[colorscheme everred]]
 
