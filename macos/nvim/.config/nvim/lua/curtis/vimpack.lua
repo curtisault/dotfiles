@@ -6,6 +6,7 @@ vim.pack.add({
   'https://github.com/neanias/everforest-nvim',
   { src = 'https://github.com/catppuccin/nvim', name = 'catppuccin' },
   'https://github.com/ellisonleao/gruvbox.nvim',
+  'https://github.com/zenbones-theme/zenbones.nvim',
 
   -- Icons (used by oil, lualine, render-markdown)
   'https://github.com/nvim-tree/nvim-web-devicons',

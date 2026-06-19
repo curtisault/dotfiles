@@ -1,5 +1,4 @@
-vim.opt.nu = true
-vim.opt.relativenumber = true
+vim.opt.nu = true vim.opt.relativenumber = true
 
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
@@ -48,6 +47,14 @@ vim.opt.updatetime = 1000
 -- vim.cmd [[colorscheme catppuccin-macchiato]]
 -- vim.cmd [[colorscheme catppuccin-mocha]]
 
--- ------ everred (custom, warm-red modeled on Everforest) ------
-vim.cmd [[colorscheme everred]]
+-- ------ Zenbones ------
+-- compat mode = no lush.nvim dependency required
+-- (must be g:bones_compat for all variants; g:zenbones_compat only covers `zenbones`)
+-- variants: zenbones / zenwritten / neobones / vimbones / rosebones
+--           forestbones / nordbones / tokyobones / seoulbones / duckbones
+--           zenburned / kanagawabones / randombones
+vim.g.bones_compat = 1
+-- vim.opt.background = 'light'
+vim.opt.background = 'dark'
+vim.cmd [[colorscheme forestbones]]
 
