@@ -1,0 +1,6 @@
+{
+  "lastChangelogVersion": "0.79.10",
+  "theme": "dark",
+  "defaultProvider": "cloudflare-workers-ai",
+  "defaultModel": "@cf/zai-org/glm-5.2"
+}
