@@ -25,13 +25,9 @@ meant to be called directly.
 | `git_contributors` | Line-count-by-author breakdown of the repo (via `git blame`), with percentages. |
 | `git_save_msg` | Dump my own commits (`Curtis Ault`) across all branches to `curtis_commits.txt`. |
 
-## GitHub / CI
-
-| Function | Purpose |
-|----------|---------|
-| `ghview [issue\|pr] <number>` | View a GitHub issue/PR (with comments) piped into nvim as markdown. |
-| `pr_ci_status <pr> [-r owner/repo] [-l] [--failed-ids]` | Show latest CI check status for a PR; surfaces failed steps, log tails (`-l`), and failed job IDs (`--failed-ids`). |
-| `rerun_ci_jobs <job-id>... [-r owner/repo]` | Re-run GitHub Actions jobs by ID. Pairs with `pr_ci_status --failed-ids`: `rerun_ci_jobs (pr_ci_status 123 --failed-ids)`. |
+> GitHub PR/issue/CI workflows are handled by the [gh-dash](https://www.gh-dash.dev/)
+> extension (and its `enhance` companion), not by shell functions. See the
+> `gh` section of the top-level setup README.
 
 ## Kubernetes
 
