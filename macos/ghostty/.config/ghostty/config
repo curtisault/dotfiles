@@ -25,3 +25,5 @@ window-padding-x = 4
 window-padding-y = 4
 
 keybind = shift+enter=text:\x1b\r
+keybind = alt+backspace=text:\x1b\x7f
+
