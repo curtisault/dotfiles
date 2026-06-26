@@ -373,6 +373,20 @@ A Nerd font is required for icon rendering — already covered by the
 [enhance setup guide](https://www.gh-dash.dev/companions/enhance/getting-started/)
 for further configuration.
 
+The DASH integration is wired up via a `prs` keybinding in
+`gh-dash/.config/gh-dash/config.yml` (stowed to `~/.config/gh-dash/`). Press
+`T` on a PR to open it in enhance:
+
+```yaml
+keybindings:
+    prs:
+        - key: T
+          command: gh enhance -R {{.RepoName}} {{.PrNumber}}
+```
+
+Stow the config with `stow gh-dash`. See the
+[DASH integration docs](https://www.gh-dash.dev/companions/enhance/dash-integration/).
+
 ### lazygit
 
 [lazygit](https://github.com/jesseduffield/lazygit) is a TUI for git with interactive staging, rebasing, and branch management.
