@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.79.10",
+  "lastChangelogVersion": "0.80.2",
   "theme": "dark",
   "defaultProvider": "cloudflare-workers-ai",
   "defaultModel": "@cf/zai-org/glm-5.2"
