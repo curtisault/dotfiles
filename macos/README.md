@@ -344,6 +344,49 @@ gh issue list              # List issues
 gh repo clone owner/repo   # Clone a repo
 ```
 
+#### gh-dash
+
+[gh-dash](https://www.gh-dash.dev/getting-started/) is a `gh` extension that
+provides an interactive TUI dashboard of PRs and issues. It's the `github`
+window in `tmux_mksession`.
+
+```bash
+gh extension install dlvhdr/gh-dash
+```
+
+```bash
+gh dash                    # Launch the dashboard
+```
+
+#### gh-dash enhance
+
+[enhance](https://www.gh-dash.dev/companions/enhance/getting-started/) is a
+companion that adds richer PR previews (diffs, CI status, comments) inside
+gh-dash.
+
+```bash
+gh extension install dlvhdr/gh-enhance
+```
+
+A Nerd font is required for icon rendering — already covered by the
+`font-hack-nerd-font` cask installed above. See the
+[enhance setup guide](https://www.gh-dash.dev/companions/enhance/getting-started/)
+for further configuration.
+
+The DASH integration is wired up via a `prs` keybinding in
+`gh-dash/.config/gh-dash/config.yml` (stowed to `~/.config/gh-dash/`). Press
+`T` on a PR to open it in enhance:
+
+```yaml
+keybindings:
+    prs:
+        - key: T
+          command: gh enhance -R {{.RepoName}} {{.PrNumber}}
+```
+
+Stow the config with `stow gh-dash`. See the
+[DASH integration docs](https://www.gh-dash.dev/companions/enhance/dash-integration/).
+
 ### lazygit
 
 [lazygit](https://github.com/jesseduffield/lazygit) is a TUI for git with interactive staging, rebasing, and branch management.

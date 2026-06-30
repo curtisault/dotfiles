@@ -86,3 +86,6 @@ end
 # This section can be safely removed at any time if needed.
 test -r '/Users/curtisault/.opam/opam-init/init.fish' && source '/Users/curtisault/.opam/opam-init/init.fish' > /dev/null 2> /dev/null; or true
 # END opam configuration
+
+# Pi
+fish_add_path "/Users/curtisault/.local/share/mise/installs/node/26.2.0/bin"
