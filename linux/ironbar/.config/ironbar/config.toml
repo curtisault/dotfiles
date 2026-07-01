@@ -1,4 +1,3 @@
-
 position = "top"
 height = 24
 
@@ -9,22 +8,41 @@ type = "workspaces"
 type = "focused"
 icon_size = 16
 
+# ---- end cluster (left → right) ----
+
+[[end]]
+type = "network_manager"
+
+[[end]]
+type = "volume"
+format = "{icon} {percentage}%"
+max_volume = 100
+
+[end.icons]
+volume_high = "󰕾"
+volume_medium = "󰖀"
+volume_low = "󰕿"
+muted = "󰝟"
+
 [[end]]
 type = "battery"
 
 [[end]]
 type = "sys_info"
 format = [
-    "{cpu_percent}% ",
-    "{memory_percent}% ",
+    "{cpu_percent}% ",
+    "{memory_percent}% ",
 ]
 
 [end.interval]
 cpu = 1
 
 [[end]]
+type = "notifications"
+show_if = "pgrep -x swaync"
+
+[[end]]
 type = "tray"
 
 [[end]]
 type = "clock"
-
