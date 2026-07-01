@@ -1,0 +1,131 @@
+/* Ironbar theme — matches Hyprland cyan→teal accent borders */
+
+* {
+    font-family: "Fira Sans", "Symbols Nerd Font", sans-serif;
+    font-size: 13px;
+    /* remove default GTK focus outlines / min sizes */
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* The bar itself */
+.background {
+    background-color: rgba(26, 26, 26, 0.85);
+    color: #d8dee9;
+}
+
+/* Generic module spacing */
+.container {
+    padding: 0 2px;
+}
+
+.widget {
+    margin: 2px 3px;
+    padding: 0 6px;
+}
+
+/* ---- Workspaces (start) ---- */
+.workspaces .item {
+    color: #7a7a7a;
+    background-color: transparent;
+    border-radius: 6px;
+    margin: 3px 2px;
+    padding: 0 8px;
+    transition: all 150ms ease-in-out;
+}
+
+.workspaces .item:hover {
+    color: #d8dee9;
+    background-color: rgba(51, 204, 255, 0.15);
+}
+
+.workspaces .item.focused {
+    color: #ffffff;
+    background-color: #005f7a;
+    font-weight: bold;
+}
+
+.workspaces .item.visible {
+    color: #00ff99;
+}
+
+.workspaces .item.urgent {
+    color: #1a1a1a;
+    background-color: #ff5555;
+}
+
+/* ---- Focused window title (center) ---- */
+.focused {
+    color: #d8dee9;
+    padding: 0 8px;
+}
+
+.focused .icon {
+    margin-right: 4px;
+}
+
+/* ---- End cluster: network, volume, battery, sysinfo, notifications, tray, clock ---- */
+.network_manager,
+.volume,
+.notifications,
+.battery,
+.sysinfo,
+.tray,
+.clock {
+    color: #d8dee9;
+    padding: 0 8px;
+    margin: 3px 2px;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+.sysinfo {
+    color: #33ccff;
+}
+
+.battery {
+    color: #00ff99;
+}
+
+.clock {
+    color: #d8dee9;
+    font-weight: bold;
+}
+
+.volume {
+    color: #33ccff;
+}
+
+.network_manager {
+    color: #d8dee9;
+}
+
+/* Notification bell: highlight when unread notifications exist */
+.notifications .count {
+    color: #ff9955;
+    font-size: 10px;
+}
+
+.clock:hover,
+.battery:hover,
+.sysinfo:hover,
+.volume:hover,
+.network_manager:hover,
+.notifications:hover {
+    background-color: rgba(51, 204, 255, 0.15);
+}
+
+/* Tray icons */
+.tray .item {
+    margin: 0 2px;
+}
+
+/* Popups (clock calendar, etc.) */
+.popup {
+    background-color: rgba(26, 26, 26, 0.97);
+    border: 1px solid #33ccff;
+    border-radius: 10px;
+    padding: 10px;
+    color: #d8dee9;
+}

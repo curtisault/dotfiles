@@ -5,6 +5,10 @@ linux/tmux/.config/tmux/plugins/
 # Serena agent files
 .serena/
 
+# Hyprland: config is the Lua file (hyprland.lua); Hyprland may auto-regenerate
+# a stub hyprland.conf that we don't want to track.
+linux/hypr/.config/hypr/hyprland.conf
+
 # Editor/IDE files
 .DS_Store
 *.swp
