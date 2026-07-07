@@ -4,6 +4,7 @@ function tmux_mksystem
     #   rss     -> eilmeldung RSS reader
     #   tasks   -> taskwarrior
     #   sys     -> btm (bottom) system monitor
+    #   net     -> bmon network bandwidth monitor
     #   disk    -> ncdu disk-usage browser ($HOME)
     set session system
     set dir $HOME
@@ -20,6 +21,8 @@ function tmux_mksystem
     tmux send-keys -t $session:tasks task Enter
     tmux new-window -t $session -n sys -c $dir
     tmux send-keys -t $session:sys btm Enter
+    tmux new-window -t $session -n net -c $dir
+    tmux send-keys -t $session:net bmon Enter
     tmux new-window -t $session -n disk -c $dir
     tmux send-keys -t $session:disk 'ncdu ~' Enter
     tmux select-window -t $session:scratch
