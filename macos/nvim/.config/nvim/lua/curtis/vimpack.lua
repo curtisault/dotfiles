@@ -13,7 +13,6 @@ vim.pack.add({
 
   -- File explorer
   'https://github.com/stevearc/oil.nvim',
-  'https://github.com/nvim-tree/nvim-tree.lua',
 
   -- Git
   'https://github.com/tpope/vim-dispatch',

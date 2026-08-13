@@ -64,6 +64,6 @@ vim.keymap.set('n', '<leader>g', '<cmd>Git<CR>', { desc = 'Open Git' })
 
 
 ------ File Tree ------
-vim.keymap.set('n', '<leader>e', '<cmd>NvimTreeToggle<CR>', { desc = 'Toggle file tree' })
-vim.keymap.set('n', '<leader>o', '<cmd>NvimTreeFindFile<CR>', { desc = 'Reveal current file in tree' })
+-- Opens at the current file's directory; pass a path to :Yazi for anywhere else.
+vim.keymap.set('n', '<leader>e', '<cmd>Yazi<CR>', { desc = 'Open yazi' })
 
