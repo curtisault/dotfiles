@@ -120,7 +120,6 @@ Files in `conf.d/` load alphabetically before `config.fish` runs interactively. 
 |-------------------|--------------------------------------------------------|
 | `sf`              | Reload fish config in-place (`source config.fish`)    |
 | `explore`         | Open yazi file manager                                 |
-| `ghview issue/pr` | View GitHub issue or PR in nvim as markdown            |
 | `tmux_mksession`  | Create tmux session with windows: nvim/run/git/claudius/github |
 | `git_pretty`      | Pretty git log with graph                              |
 | `db_port_forward` | kubectl port-forward to db-proxy namespace (default port 15433→5432) |

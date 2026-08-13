@@ -1,6 +1,17 @@
 {
   "$schema": "https://charm.land/crush.json",
   "providers": {
+    "cloudflare": {
+      "type": "openai-compat",
+      "base_url": "https://api.cloudflare.com/client/v4/accounts/a6c3d03a9ff678d088ee9baf4f57e226/ai/v1",
+      "api_key": "$CLOUDFLARE_AI_TOKEN",
+      "models": [
+        {
+          "id": "@cf/zai-org/glm-5.2",
+          "name": "GLM 5.2"
+        }
+      ]
+    },
     "lmstudio": {
       "type": "openai-compat",
       "base_url": "http://localhost:1234/v1",
