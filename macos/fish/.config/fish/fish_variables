@@ -1,4 +1,4 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
 SETUVAR __fish_initialized:4300
-SETUVAR fish_user_paths:/Users/curtisault/\x2elmstudio/bin\x1e/Users/curtisault/\x2elocal/bin\x1e/opt/homebrew/opt/libpq/bin\x1e/opt/homebrew/opt/postgresql\x4017/bin\x1e/Users/curtisault/\x2ecargo/bin\x1e/opt/homebrew/sbin\x1e/opt/homebrew/bin
+SETUVAR fish_user_paths:/Users/curtisault/\x2elocal/share/mise/installs/node/26\x2e2\x2e0/bin\x1e/Users/curtisault/\x2elmstudio/bin\x1e/Users/curtisault/\x2elocal/bin\x1e/opt/homebrew/opt/libpq/bin\x1e/opt/homebrew/opt/postgresql\x4017/bin\x1e/Users/curtisault/\x2ecargo/bin\x1e/opt/homebrew/sbin\x1e/opt/homebrew/bin

@@ -89,3 +89,7 @@ test -r '/Users/curtisault/.opam/opam-init/init.fish' && source '/Users/curtisau
 
 # Pi
 fish_add_path "/Users/curtisault/.local/share/mise/installs/node/26.2.0/bin"
+
+# Added by GitButler installer
+fish_add_path $HOME/.local/bin
+but completions fish | source
