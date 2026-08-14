@@ -2,7 +2,7 @@
 -- --chooser-file makes yazi write the selected path(s) there and exit, then we
 -- open them. Avoids nesting nvim inside nvim.
 
-local function open(path)
+local function open(path, opencmd)
   if vim.fn.executable("yazi") == 0 then
     vim.notify("yazi not found on PATH", vim.log.levels.ERROR)
     return
@@ -39,9 +39,10 @@ local function open(path)
       end
       vim.fn.delete(chooser)
 
+      -- With tabedit, a multi-file selection lands one file per tab.
       for _, file in ipairs(chosen) do
         if file ~= "" then
-          vim.cmd.edit(vim.fn.fnameescape(file))
+          vim.cmd[opencmd](vim.fn.fnameescape(file))
         end
       end
     end,
@@ -51,11 +52,16 @@ local function open(path)
 end
 
 -- No argument opens at the current file's directory.
-vim.api.nvim_create_user_command("Yazi", function(opts)
-  local path = opts.args
-  if path == "" then
-    local dir = vim.fn.expand("%:p:h")
-    path = dir ~= "" and dir or vim.fn.getcwd()
-  end
-  open(path)
-end, { nargs = "?", complete = "dir", desc = "Open yazi" })
+local function define(name, opencmd)
+  vim.api.nvim_create_user_command(name, function(opts)
+    local path = opts.args
+    if path == "" then
+      local dir = vim.fn.expand("%:p:h")
+      path = dir ~= "" and dir or vim.fn.getcwd()
+    end
+    open(path, opencmd)
+  end, { nargs = "?", complete = "dir", desc = "Open yazi (" .. opencmd .. ")" })
+end
+
+define("Yazi", "edit")
+define("YaziTab", "tabedit")

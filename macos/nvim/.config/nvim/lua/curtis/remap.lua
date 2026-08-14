@@ -64,6 +64,7 @@ vim.keymap.set('n', '<leader>g', '<cmd>Git<CR>', { desc = 'Open Git' })
 
 
 ------ File Tree ------
--- Opens at the current file's directory; pass a path to :Yazi for anywhere else.
+-- Both open at the current file's directory; pass a path to the command for anywhere else.
 vim.keymap.set('n', '<leader>e', '<cmd>Yazi<CR>', { desc = 'Open yazi' })
+vim.keymap.set('n', '<leader>E', '<cmd>YaziTab<CR>', { desc = 'Open yazi (pick opens in new tab)' })
 
