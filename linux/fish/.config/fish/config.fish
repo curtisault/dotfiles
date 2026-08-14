@@ -82,3 +82,6 @@ function lS
 end
 
 source /usr/share/cachyos-fish-config/cachyos-config.fish
+
+# Pi
+fish_add_path "/home/curtisault/.local/share/mise/installs/node/26.3.0/bin"
