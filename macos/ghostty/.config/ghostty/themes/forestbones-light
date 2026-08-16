@@ -1,0 +1,27 @@
+# forestbones (light) — matches zenbones.nvim forestbones with background=light
+# palette extracted from the theme's shipped terminal colors
+
+background = FAF3E1
+foreground = 4F5B62
+
+cursor-color = 4F5B62
+cursor-text = FAF3E1
+selection-background = D3DFE6
+selection-foreground = 4F5B62
+
+palette = 0=#FAF3E1
+palette = 1=#F85550
+palette = 2=#8DA200
+palette = 3=#DEA000
+palette = 4=#3A94C4
+palette = 5=#DF69BA
+palette = 6=#36A87E
+palette = 7=#4F5B62
+palette = 8=#DBC988
+palette = 9=#E6271C
+palette = 10=#758700
+palette = 11=#B98500
+palette = 12=#297CA6
+palette = 13=#CA43A3
+palette = 14=#258C67
+palette = 15=#6E7F88

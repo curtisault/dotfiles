@@ -34,11 +34,14 @@ vim.opt.updatetime = 1000
 -- vim.opt.background = 'light'
 
 -- ------ Everforest ------
--- vim.cmd[[colorscheme everforest]]
--- vim.g.everforest_background = 'soft'
--- vim.g.everforest_background = 'hard'
+-- neanias/everforest-nvim (lua port) — configured via setup(), not the
+-- vim.g.everforest_* globals used by the original vimscript plugin.
+-- background: 'soft' | 'medium' | 'hard'
+-- setup() + vim.opt.background must both precede the colorscheme command,
+-- since the palette is generated from vim.o.background at load time.
+-- require('everforest').setup({ background = 'soft' })
 -- vim.opt.background = 'light'
--- vim.opt.background = 'dark'
+-- vim.cmd [[colorscheme everforest]]
 
 -- ------ Catppuccin ------
 -- vim.cmd [[colorscheme catppuccin]]
@@ -54,7 +57,7 @@ vim.opt.updatetime = 1000
 --           forestbones / nordbones / tokyobones / seoulbones / duckbones
 --           zenburned / kanagawabones / randombones
 vim.g.bones_compat = 1
--- vim.opt.background = 'light'
-vim.opt.background = 'dark'
+vim.opt.background = 'light'
+-- vim.opt.background = 'dark'
 vim.cmd [[colorscheme forestbones]]
 

@@ -36,7 +36,11 @@ macos-titlebar-style = hidden
 macos-non-native-fullscreen = true
 resize-overlay = never
 
-theme = forestbones
+theme = everforest-light-soft
+# theme = Everforest Light Med
+# theme = forestbones-light
+# theme = forestbones
+# theme = dark:forestbones,light:forestbones-light
 # theme = Catppuccin Frappe
 # theme = Catppuccin Latte
 
