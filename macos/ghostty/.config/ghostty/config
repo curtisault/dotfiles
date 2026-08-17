@@ -38,11 +38,11 @@ resize-overlay = never
 
 theme = everforest-light-soft
 # theme = Everforest Light Med
+# theme = Catppuccin Latte
+# theme = Catppuccin Frappe
 # theme = forestbones-light
 # theme = forestbones
 # theme = dark:forestbones,light:forestbones-light
-# theme = Catppuccin Frappe
-# theme = Catppuccin Latte
 
 window-padding-x = 4
 window-padding-y = 4

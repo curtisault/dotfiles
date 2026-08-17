@@ -45,7 +45,7 @@ vim.opt.updatetime = 1000
 
 -- ------ Catppuccin ------
 -- vim.cmd [[colorscheme catppuccin]]
--- vim.cmd [[colorscheme catppuccin-latte]]
+vim.cmd [[colorscheme catppuccin-latte]]
 -- vim.cmd [[colorscheme catppuccin-frappe]]
 -- vim.cmd [[colorscheme catppuccin-macchiato]]
 -- vim.cmd [[colorscheme catppuccin-mocha]]
@@ -57,7 +57,7 @@ vim.opt.updatetime = 1000
 --           forestbones / nordbones / tokyobones / seoulbones / duckbones
 --           zenburned / kanagawabones / randombones
 vim.g.bones_compat = 1
-vim.opt.background = 'light'
+-- vim.opt.background = 'light'
 -- vim.opt.background = 'dark'
-vim.cmd [[colorscheme forestbones]]
+-- vim.cmd [[colorscheme forestbones]]
 
