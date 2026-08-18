@@ -14,9 +14,9 @@ font-family = "Monaspace Neon"
 font-family = "JetBrainsMono Nerd Font"
 font-family-bold = "Monaspace Neon"
 font-family-bold = "JetBrainsMono Nerd Font"
-font-family-italic = "Monaspace Radon"
+font-family-italic = "Monaspace Krypton"
 font-family-italic = "JetBrainsMono Nerd Font"
-font-family-bold-italic = "Monaspace Radon"
+font-family-bold-italic = "Monaspace Krypton"
 font-family-bold-italic = "JetBrainsMono Nerd Font"
 
 # Monaspace texture healing + code ligatures
@@ -36,10 +36,14 @@ macos-titlebar-style = hidden
 macos-non-native-fullscreen = true
 resize-overlay = never
 
-theme = everforest-light-soft
+theme = gruvbox-dark-soft
+# theme = gruvbox-light-soft
+# theme = everforest-light-soft
 # theme = Everforest Light Med
-# theme = Catppuccin Latte
 # theme = Catppuccin Frappe
+# theme = Catppuccin Mocha
+# theme = Catppuccin Macchiato
+# theme = Catppuccin Latte
 # theme = forestbones-light
 # theme = forestbones
 # theme = dark:forestbones,light:forestbones-light

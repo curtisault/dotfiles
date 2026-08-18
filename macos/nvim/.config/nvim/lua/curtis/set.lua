@@ -29,9 +29,12 @@ vim.opt.updatetime = 1000
 -- colorschemes
 
 -- ------ Gruvbox ------
--- vim.cmd[[colorscheme gruvbox]]
--- vim.opt.background = 'dark'
+-- ellisonleao/gruvbox.nvim — contrast: 'hard' | 'soft' | '' (medium)
+-- setup() + vim.opt.background must both precede the colorscheme command.
+require('gruvbox').setup({ contrast = 'soft' })
+vim.opt.background = 'dark'
 -- vim.opt.background = 'light'
+vim.cmd [[colorscheme gruvbox]]
 
 -- ------ Everforest ------
 -- neanias/everforest-nvim (lua port) — configured via setup(), not the
@@ -45,7 +48,7 @@ vim.opt.updatetime = 1000
 
 -- ------ Catppuccin ------
 -- vim.cmd [[colorscheme catppuccin]]
-vim.cmd [[colorscheme catppuccin-latte]]
+-- vim.cmd [[colorscheme catppuccin-latte]]
 -- vim.cmd [[colorscheme catppuccin-frappe]]
 -- vim.cmd [[colorscheme catppuccin-macchiato]]
 -- vim.cmd [[colorscheme catppuccin-mocha]]
