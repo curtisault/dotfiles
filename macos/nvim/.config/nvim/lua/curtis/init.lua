@@ -5,5 +5,4 @@ require("curtis.set")
 require("curtis.lualine")
 require("curtis.completions")
 require("curtis.mini")
-require("agentflow").setup()
 
