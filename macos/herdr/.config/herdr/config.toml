@@ -1,0 +1,60 @@
+# herdr configuration — https://herdr.dev
+# Stowed to ~/.config/herdr/config.toml
+#
+# Full annotated defaults: `herdr --default-config`
+# Validate this file:      `herdr config check`
+# Reload in a running server: `herdr server reload-config`
+
+[theme]
+# Match ghostty (theme = gruvbox-dark-soft)
+name = "gruvbox"
+
+auto_switch = false
+[keys]
+# Same prefix as tmux (set -g prefix C-Space)
+prefix = "ctrl+space"
+
+# Vim-style pane focus — matches the tmux `bind h/j/k/l select-pane` bindings.
+# These are herdr's defaults, listed explicitly so the mapping is obvious.
+focus_pane_left = "prefix+h"
+focus_pane_down = "prefix+j"
+focus_pane_up = "prefix+k"
+focus_pane_right = "prefix+l"
+
+# Swap agents (agent panes) vim-style — exchange the focused agent's pane
+# with its neighbor. These are herdr's defaults, listed explicitly.
+swap_pane_left = "prefix+shift+h"
+swap_pane_down = "prefix+shift+j"
+swap_pane_up = "prefix+shift+k"
+swap_pane_right = "prefix+shift+l"
+
+# Pickers: s = spaces (workspace navigator), w = session navigator (goto).
+# Swapped from the defaults (goto = prefix+g, workspace_picker = prefix+w);
+# settings moves off prefix+s to comma, matching the macOS cmd+, convention.
+workspace_picker = "prefix+s"
+goto = "prefix+w"
+settings = "prefix+comma"
+
+# Switch spaces (workspaces) vim-style. Spaces are a vertical list in the
+# sidebar, so j/k = next/previous. Direct switching from anywhere:
+previous_workspace = "prefix+ctrl+k"
+next_workspace = "prefix+ctrl+j"
+# ...and j/k inside the workspace picker (prefix+w) instead of arrow keys.
+# navigate_* keys are picker-only, so plain j/k is safe here.
+navigate_workspace_up = "k"
+navigate_workspace_down = "j"
+
+# Move the active tab left/right — completes the ctrl layer:
+# ctrl+j/k switches spaces, ctrl+h/l drags the tab along its row.
+move_tab_previous = "prefix+ctrl+h"
+move_tab_next = "prefix+ctrl+l"
+
+# Cycle agents in the agent panel with -/=.
+previous_agent = "prefix+minus"
+next_agent = "prefix+="
+# prefix+minus was split_horizontal's default; move it to _ (shift+minus)
+# to keep the horizontal-line mnemonic.
+split_horizontal = "prefix+shift+minus"
+
+[ui]
+show_agent_labels_on_pane_borders = true
