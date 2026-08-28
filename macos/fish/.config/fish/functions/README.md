@@ -15,6 +15,12 @@ meant to be called directly.
 | `tmux_mksession <name> [dir] [--cli claude\|pi]` | Spin up a **project** session with a standard window layout (`nvim`, `run` split, `git`/lazygit, `github`/`gh dash`, `db`/pgcli, AI CLI). |
 | `tmux_mksystem` | Spin up the fixed personal **`system`** session: `scratch` shell, `rss` reader, `tasks` (taskwarrior), `sys` (btm), `disk` (ncdu). No args; rooted at `$HOME`. |
 
+## herdr spaces
+
+| Function | Purpose |
+|----------|---------|
+| `herdr_mkspace <name> [dir] [--cli claude\|pi]` | Herdr port of `tmux_mksession`: create a **space** with the same tab layout (`nvim`, `run` split, `git`/lazygit, `github`/`gh dash`, `db`/pgcli, AI CLI). Talks to the running herdr server over its socket API; requires `jq`. |
+
 ## git
 
 | Function | Purpose |
