@@ -12,7 +12,7 @@ All scripts install language servers to `~/.local/bin/` (ensure this is in your 
 
 ### Supported Language Servers
 
-- **Expert** - Elixir Language Server
+- **dexter** - Elixir Language Server
 - **Lua Language Server** - Lua
 - **Pyright** - Python
 - **TypeScript Language Server** - TypeScript/JavaScript

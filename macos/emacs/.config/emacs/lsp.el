@@ -21,8 +21,8 @@
         eglot-events-buffer-size 0             ; Disable events buffer for performance
         eglot-send-changes-idle-time 0.5
         eglot-extend-to-xref t)                ; Cross-workspace xref
-  ;; Configure Expert for Elixir
+  ;; Configure dexter for Elixir
   (add-to-list 'eglot-server-programs
-               '(elixir-ts-mode "expert" "--stdio")))
+               '(elixir-ts-mode "dexter" "lsp")))
 
 ;;; lsp.el ends here

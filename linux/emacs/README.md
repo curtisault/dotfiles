@@ -164,7 +164,7 @@ Git workflow built around Magit, widely considered the best Git interface in any
 
 LSP support using the built-in Eglot client (Emacs 29+). Lighter and faster than lsp-mode with fewer dependencies.
 
-- **Eglot** - Automatically starts language servers when opening supported file types. Configured for Elixir (Expert), Python, Lua, JavaScript, TypeScript, and Rust.
+- **Eglot** - Automatically starts language servers when opening supported file types. Configured for Elixir (dexter), Python, Lua, JavaScript, TypeScript, and Rust.
 - **Performance tuning** - Events buffer disabled, non-blocking connection, 0.5s idle time before sending changes. Servers auto-shutdown when the last buffer for that language is closed.
 - **Leader bindings** - `<leader>lr` rename, `<leader>la` code actions, `<leader>lf` format, `<leader>ld` go to definition, `<leader>li` find references.
 - **Project bindings** - `<leader>pf` find file in project, `<leader>ps` project shell, `<leader>pg` project grep.

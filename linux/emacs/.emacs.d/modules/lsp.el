@@ -14,9 +14,9 @@
   (setq eglot-autoshutdown t)
   (setq eglot-sync-connect nil)
 
-  ;; Configure Expert for Elixir
+  ;; Configure dexter for Elixir
   (add-to-list 'eglot-server-programs
-               '(elixir-ts-mode "expert" "--stdio"))
+               '(elixir-ts-mode "dexter" "lsp"))
 
   ;; Performance tuning
   (setq eglot-events-buffer-size 0)

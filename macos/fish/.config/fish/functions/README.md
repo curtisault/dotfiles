@@ -49,7 +49,7 @@ meant to be called directly.
 |----------|---------|
 | `dialyze` | Run the full dialyzer cycle (clean/build/run, short format) and chime when done. |
 | `ecto_reset_test` | `mix ecto.reset` against `MIX_ENV=test`. |
-| `lsp_reset` | Nuke `.expert/` and `_build/` to reset the language server / build state. |
+| `lsp_reset` | Nuke `.dexter/` and `_build/` to reset the language server / build state. |
 
 ## system / processes
 
