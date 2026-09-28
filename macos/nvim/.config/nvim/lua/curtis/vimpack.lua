@@ -35,8 +35,6 @@ vim.pack.add({
   -- Markdown rendering
   'https://github.com/MeanderingProgrammer/render-markdown.nvim',
 
-  -- AgentFlow
-  -- 'https://github.com/curtisault/agentflow.nvim',
 })
 
 -- Run TSUpdate after treesitter install/update

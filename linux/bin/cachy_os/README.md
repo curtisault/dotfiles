@@ -10,7 +10,7 @@ Refresh all language servers:
 ```
 
 This will install/update:
-- **Expert** - Elixir Language Server (from GitHub nightly releases)
+- **dexter** - Elixir Language Server (from GitHub releases)
 - **Lua Language Server** - via pacman (preferred) or GitHub releases
 - **Pyright** - Python Language Server via npm (or python-lsp-server via pipx)
 - **TypeScript Language Server** - via npm
@@ -28,7 +28,7 @@ The script prefers native package management where possible:
 ## Requirements
 
 - **pacman** - Required (CachyOS/Arch package manager)
-- **gh** (GitHub CLI) - Required for Expert, fallback for other servers
+- **gh** (GitHub CLI) - Required for dexter, fallback for other servers
 - **npm** (optional) - For Pyright and TypeScript LS
 - **pipx** (optional) - Alternative for Python language server
 - **rustup** (optional) - Preferred method for rust-analyzer
@@ -42,7 +42,7 @@ sudo pacman -S github-cli npm rustup
 
 | Server | Location | Install Method |
 |--------|----------|----------------|
-| Expert | `~/.local/bin/` | gh (GitHub releases) |
+| dexter | `~/.local/bin/` | gh (GitHub releases) |
 | lua-language-server | `/usr/bin/` | pacman |
 | rust-analyzer | `~/.cargo/bin/` | rustup |
 | pyright | mise-managed node prefix | npm via mise |

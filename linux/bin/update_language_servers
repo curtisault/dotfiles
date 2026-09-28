@@ -57,31 +57,51 @@ log_info "Detected platform: $PLATFORM"
 # Language Server Installers
 # ============================================================================
 
-install_expert() {
-    log_info "Installing/updating Expert (Elixir Language Server)..."
+# dexter publishes assets as dexter_<Os>_<Arch>.tar.gz with the binary nested
+# in a same-named directory, e.g. dexter_Linux_x86_64/dexter
+dexter_asset_name() {
+    local os=$(echo "$PLATFORM" | cut -d_ -f1)
+    local arch=$(echo "$PLATFORM" | cut -d_ -f2)
 
-    local binary_name="expert_${PLATFORM}"
-    local install_path="${INSTALL_DIR}/expert"
+    case "$os" in
+        darwin) os="Darwin" ;;
+        linux)  os="Linux" ;;
+    esac
 
-    if command -v gh &> /dev/null; then
-        # Use gh CLI if available
-        cd "$INSTALL_DIR"
-        if gh release download nightly \
-            --pattern "$binary_name" \
-            --repo elixir-lang/expert \
-            --clobber 2>/dev/null; then
+    case "$arch" in
+        amd64) arch="x86_64" ;;
+    esac
 
-            mv "$binary_name" expert
-            chmod +x expert
+    echo "dexter_${os}_${arch}"
+}
 
-            local version=$(./expert --version 2>&1 | head -1)
-            log_success "Expert installed: $version"
-        else
-            log_error "Failed to download Expert"
-            return 1
-        fi
+install_dexter() {
+    log_info "Installing/updating dexter (Elixir Language Server)..."
+
+    if ! command -v gh &> /dev/null; then
+        log_warn "gh CLI not found, skipping dexter"
+        return 1
+    fi
+
+    local asset_base=$(dexter_asset_name)
+    local archive_name="${asset_base}.tar.gz"
+    local tmp_dir=$(mktemp -d)
+
+    cd "$tmp_dir"
+    if gh release download \
+        --pattern "$archive_name" \
+        --repo remoteoss/dexter 2>/dev/null; then
+
+        tar xzf "$archive_name"
+        mv "${asset_base}/dexter" "${INSTALL_DIR}/dexter"
+        chmod +x "${INSTALL_DIR}/dexter"
+
+        rm -rf "$tmp_dir"
+        local version=$("${INSTALL_DIR}/dexter" version 2>&1 | head -1)
+        log_success "dexter installed: $version"
     else
-        log_warn "gh CLI not found, skipping Expert"
+        rm -rf "$tmp_dir"
+        log_error "Failed to download dexter"
         return 1
     fi
 }
@@ -225,7 +245,7 @@ main() {
     local failed=0
 
     # Install each language server
-    install_expert || ((failed++))
+    install_dexter || ((failed++))
     echo
 
     install_lua_language_server || ((failed++))
@@ -252,9 +272,9 @@ main() {
     log_info "Installed language servers:"
     echo
 
-    if [ -f "${INSTALL_DIR}/expert" ]; then
-        echo -n "  Expert: "
-        "${INSTALL_DIR}/expert" --version 2>&1 | head -1
+    if [ -f "${INSTALL_DIR}/dexter" ]; then
+        echo -n "  dexter: "
+        "${INSTALL_DIR}/dexter" version 2>&1 | head -1
     fi
 
     if command -v lua-language-server &> /dev/null; then

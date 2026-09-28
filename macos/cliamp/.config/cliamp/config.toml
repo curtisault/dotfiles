@@ -1,0 +1,40 @@
+# cliamp configuration
+# Docs: https://whiterose.org.contextowl.co/docs/cliamp/configuration
+
+# Default volume in dB (range: volume_min to 6)
+volume = 0
+
+# Minimum volume floor in dB (range: -90 to 0)
+volume_min = -50
+
+# Repeat mode: "off", "all", or "one"
+repeat = "One"
+
+# Start with shuffle enabled
+shuffle = false
+
+# Start with mono output (L+R downmix)
+mono = false
+
+# Initial directory for the file browser ('o' key)
+initial_directory = "~/Music"
+
+# Shift+Left/Right seek jump in seconds
+seek_large_step_sec = 30
+
+# EQ preset: "Flat", "Rock", "Pop", "Jazz", "Classical", "Bass Boost",
+# "Treble Boost", "Vocal", "Electronic", "Acoustic", or "Custom"
+eq_preset = "Flat"
+
+# Visualizer mode (Bars, Rain, Wave, Retro, Matrix, ClassicLED, Stereo, ...)
+visualizer = "Bars"
+
+# Provider cliamp opens at start: radio, navidrome, spotify, plex, jellyfin, ...
+provider = "radio"
+
+# UI theme (built-in; see `t` picker or ~/.config/cliamp/themes/)
+theme = "gruvbox"
+
+# Log level: "debug", "info", "warn", or "error"
+# Logs are written to ~/.config/cliamp/cliamp.log
+log_level = "info"

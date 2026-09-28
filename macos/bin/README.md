@@ -10,7 +10,7 @@ Update all language servers:
 ```
 
 This will install/update:
-- **Expert** - Elixir Language Server (from GitHub nightly releases)
+- **dexter** - Elixir Language Server (from GitHub releases)
 - **Lua Language Server** - from GitHub releases (LuaLS/lua-language-server)
 - **rust-analyzer** - from GitHub releases (or via rustup if available)
 - **Pyright** - Python Language Server via npm (or python-lsp-server via pipx)
