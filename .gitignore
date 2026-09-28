@@ -23,3 +23,6 @@ linux/tmux/.config/tmux/plugins/
 /macos/emacs/.config/emacs/auto-save-list/
 /macos/emacs/.config/emacs/autosaves/
 /macos/emacs/.config/emacs/backups/
+/macos/cliamp/.config/cliamp/cliamp.log
+/macos/cliamp/.config/cliamp/cliamp.sock.pid
+/macos/cliamp/.config/cliamp/history.toml
