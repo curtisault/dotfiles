@@ -7,8 +7,8 @@ onboarding = false
 # Reload in a running server: `herdr server reload-config`
 
 [theme]
-# Match ghostty (theme = gruvbox-dark-soft)
-name = "gruvbox"
+# Match ghostty (theme = Catppuccin Frappe)
+name = "catppuccin"
 
 auto_switch = false
 [keys]
@@ -31,7 +31,7 @@ swap_pane_right = "prefix+shift+l"
 
 # Pickers: s = spaces (workspace navigator), w = session navigator (goto).
 # Swapped from the defaults (goto = prefix+g, workspace_picker = prefix+w);
-# settings moves off prefix+s to comma, matching the macOS cmd+, convention.
+# settings moves off prefix+s to comma (the common "settings" key).
 workspace_picker = "prefix+s"
 goto = "prefix+w"
 settings = "prefix+comma"
