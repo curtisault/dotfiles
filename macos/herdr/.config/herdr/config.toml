@@ -40,7 +40,7 @@ settings = "prefix+comma"
 # sidebar, so j/k = next/previous. Direct switching from anywhere:
 previous_workspace = "prefix+ctrl+k"
 next_workspace = "prefix+ctrl+j"
-# ...and j/k inside the workspace picker (prefix+w) instead of arrow keys.
+# ...and j/k inside the workspace picker (prefix+s) instead of arrow keys.
 # navigate_* keys are picker-only, so plain j/k is safe here.
 navigate_workspace_up = "k"
 navigate_workspace_down = "j"

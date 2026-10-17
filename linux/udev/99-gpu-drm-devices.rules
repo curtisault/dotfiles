@@ -1,0 +1,20 @@
+# Stable, colon-free DRM card symlinks for AQ_DRM_DEVICES (Hyprland / aquamarine).
+#
+# Why: AQ_DRM_DEVICES uses ':' as its device-list separator, which collides with
+# the ':' in PCI addresses -- so /dev/dri/by-path/pci-0000:00:02.0-card style
+# names get shredded and the DRM backend fails, aborting Hyprland at startup.
+# These symlinks are matched on the fixed PCI slot, so they always point at the
+# right GPU even if card{1,2} renumber across boots, and contain no colons.
+#
+# Install:
+#   sudo install -Dm644 ~/dotfiles/linux/udev/99-gpu-drm-devices.rules \
+#       /etc/udev/rules.d/99-gpu-drm-devices.rules
+#   sudo udevadm control --reload-rules
+#   sudo udevadm trigger --subsystem-match=drm
+# Verify:
+#   ls -l /dev/dri/intel-card /dev/dri/nvidia-card
+#
+# Host: thinkpad-cachyos  (Intel UHD 630 @ 00:02.0, NVIDIA Quadro T1000 @ 01:00.0)
+
+SUBSYSTEM=="drm", KERNEL=="card[0-9]*", KERNELS=="0000:00:02.0", SYMLINK+="dri/intel-card"
+SUBSYSTEM=="drm", KERNEL=="card[0-9]*", KERNELS=="0000:01:00.0", SYMLINK+="dri/nvidia-card"
