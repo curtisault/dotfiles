@@ -1,0 +1,162 @@
+#!/usr/bin/env fish
+# Open a project as a tuios session, or the one shared tools session.
+# Builds the session when it is missing, then shows it without nesting:
+# inside tuios the current client switches to it, outside a client attaches.
+#
+# Usage: tuios-project [--cli claude|omp] [--detach] [dir]
+#        tuios-project --tools [--detach]
+#   With no dir, pick one with fzf from ~/projects/* and ~/dotfiles.
+#   --tools opens the shared "tools" session (gh dash, pgcli, k9s,
+#     podman-tui, btm, taskwarrior-tui, cliamp). Run from
+#     inside it, --tools goes back to the session you came from.
+#   --detach builds the session and stops, without switching or attaching.
+#
+# Bound in tuios config.toml as popup keys: leader ctrl+p (project picker)
+# and leader ctrl+t (tools toggle).
+
+argparse 'cli=' detach tools h/help -- $argv
+or exit 1
+
+if set -q _flag_help
+    sed -n '2,15p' (status filename) | string replace -r '^# ?' ''
+    exit 0
+end
+
+set tools_session tools
+set state_dir (set -q XDG_STATE_HOME; and echo $XDG_STATE_HOME; or echo ~/.local/state)/tuios-project
+set last_file $state_dir/last-session
+
+function session_exists
+    tuios ls --json 2>/dev/null | jq -e --arg s $argv[1] 'any(.[]; .name == $s)' >/dev/null
+end
+
+# Run a program in a shell inside the window, so the pane survives when the
+# program exits (same as tmux send-keys).
+function run_in -a session window cmd
+    tuios send-text -s $session -w $window "$cmd
+"
+end
+
+function build_project -a session dir ai_window ai_command
+    # Workspace 1: editor. --detach gives one initial window; rename it.
+    tuios new --detach $session --cwd $dir
+    tuios set-window -s $session --name nvim
+    tuios set-workspace-name -s $session 1 nvim
+
+    # Workspace 2: dev server + tests, tiled side by side.
+    tuios new-window -s $session server --workspace 2 --cwd $dir --no-focus
+    tuios new-window -s $session tests --workspace 2 --cwd $dir --no-focus
+    tuios set-workspace-name -s $session 2 run
+
+    # Workspace 3: git. GitButler's TUI for a project in GitButler mode
+    # (HEAD on gitbutler/workspace), lazygit for everything else.
+    set git_tool lazygit
+    set head (git -C $dir symbolic-ref --short -q HEAD 2>/dev/null)
+    if command -q but; and test "$head" = gitbutler/workspace
+        set git_tool 'but tui'
+    end
+    tuios new-window -s $session git --workspace 3 --cwd $dir --no-focus
+    run_in $session git $git_tool
+    tuios set-workspace-name -s $session 3 git
+
+    # Workspace 4: AI CLI.
+    tuios new-window -s $session $ai_window --workspace 4 --cwd $dir --no-focus
+    run_in $session $ai_window $ai_command
+    tuios set-workspace-name -s $session 4 $ai_window
+
+    tuios select-workspace -s $session 1
+end
+
+function build_tools -a session
+    # Workspace 1: GitHub dashboard. --detach gives one initial window.
+    tuios new --detach $session --cwd ~
+    tuios set-window -s $session --name github
+    run_in $session github 'gh dash'
+    tuios set-workspace-name -s $session 1 github
+
+    # Workspaces 2-7: one shared tool each, in a shell so the pane survives.
+    set ws 2
+    for tool in 'db:pgcli -u postgres' 'k9s:k9s' 'podman:podman-tui' \
+        'bottom:btm' 'tasks:taskwarrior-tui' 'music:cliamp'
+        set name (string split -m1 : $tool)[1]
+        set cmd (string split -m1 : $tool)[2]
+        tuios new-window -s $session $name --workspace $ws --cwd ~ --no-focus
+        # Only one cliamp can own its socket; leave a shell if one is running.
+        if test $name != music; or not pgrep -x cliamp >/dev/null
+            run_in $session $name $cmd
+        end
+        tuios set-workspace-name -s $session $ws $name
+        set ws (math $ws + 1)
+    end
+
+    tuios select-workspace -s $session 1
+end
+
+if set -q _flag_tools
+    set session $tools_session
+    # Toggle: from inside tools, go back to where you came from.
+    if test "$TUIOS_SESSION" = $tools_session
+        set back (cat $last_file 2>/dev/null)
+        if test -n "$back"; and session_exists $back
+            set session $back
+        else
+            echo "No session to go back to" >&2
+            exit 1
+        end
+    end
+    if not session_exists $session
+        build_tools $session >/dev/null
+    end
+else
+    # Choose the AI CLI client to launch (default: claude)
+    set cli claude
+    set -q _flag_cli; and set cli $_flag_cli
+    switch $cli
+        case claude
+            set ai_window claudius
+            set ai_command claude
+        case omp pi
+            set ai_window pious
+            set ai_command omp
+        case '*'
+            echo "Unknown --cli '$cli' (expected: claude or omp)" >&2
+            exit 1
+    end
+
+    if test (count $argv) -ge 1
+        set dir $argv[1]
+    else
+        set dir (begin
+            find ~/projects -mindepth 1 -maxdepth 1 -type d
+            test -d ~/dotfiles; and echo ~/dotfiles
+        end | sort | fzf --prompt 'project> ')
+        or exit 0 # picker cancelled
+    end
+
+    if not test -d "$dir"
+        echo "Directory '$dir' does not exist" >&2
+        exit 1
+    end
+    set dir (realpath $dir)
+
+    # ':' means host:session to switch-session, so keep it out of names.
+    set session (basename $dir | string replace -ra '[.:]' '_')
+
+    if not session_exists $session
+        build_project $session $dir $ai_window $ai_command >/dev/null
+    end
+end
+
+set -q _flag_detach; and exit 0
+
+# Remember the session we are leaving, so --tools can toggle back to it.
+if set -q TUIOS_SESSION; and test "$TUIOS_SESSION" != $tools_session
+    mkdir -p $state_dir
+    echo $TUIOS_SESSION >$last_file
+end
+
+if set -q TUIOS_SESSION
+    exec tuios switch-session $session
+else
+    exec tuios attach $session
+end
